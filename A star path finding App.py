@@ -26,7 +26,7 @@ children_rects = []
 closed_rects = []
 
 def draw_text()
-
+    pass
 # A* algorithm	
 class Node(): 
 	# class for nodes - white rectangles
