@@ -1,10 +1,15 @@
 import pygame
 import numpy as np
+import time
+import threading
 
 pygame.init() # initializing
 
+pygame.font.init()
+myfont = pygame.font.SysFont('Comic Sans MS', 30)
+
 w = 800
-h = 600
+h = 650
 display = pygame.display.set_mode((w,h))
 pygame.display.set_caption('A star tracking app')
 mainClock = pygame.time.Clock()
@@ -14,6 +19,13 @@ WHITE = (255,255,255)
 GREEN = (0,242,0)
 RED = (231,0,0)
 LIGHT_GREEN = (126, 186, 0)
+BLUE = (94, 182, 202)
+LIGHTER_GREEN = (15, 216, 92)
+
+children_rects = []
+closed_rects = []
+
+def draw_text()
 
 # A* algorithm	
 class Node(): 
@@ -30,6 +42,13 @@ class Node():
 	def __eq__(self,other):
 		# check equality with another node
 		return self.position == other.position
+
+	def get_rect(self):
+		a = 15
+		x = self.position[1] * 18 + 5 
+		y = self.position[0] * 18 + 5
+		rect = pygame.Rect(x,y,a,a)
+		return rect
 
 def return_path(current_node, maze):
 	# returns the path of the search function
@@ -62,16 +81,23 @@ def search(maze, start, end): # cost -> value of one transition
 
 	open_list.append(start_node)
 
-	iterations = 0
-	max_iterations = (len(maze)//2)**10
-
 	num_rows, num_cols = np.shape(maze) # number of rows and columns of maze
+
+	# all possible moves from one square to another
+	moves = [
+	[0,-1], # up
+	[1,0], # right
+	[0,1], # down
+	[-1,0], # left
+	[1,-1], # up right
+	[1,1], # down right
+	[-1,1], # down left
+	[-1,-1] # up left
+	]
 
 	# loop to end node
 	while len(open_list) > 0:
                 
-		iterations += 1
-
 		current_node = open_list[0]
 		current_index = 0
 		for index,item in enumerate(open_list): # find 'the best' node
@@ -79,27 +105,11 @@ def search(maze, start, end): # cost -> value of one transition
 				current_node = item
 				current_index = index
 
-		if iterations > max_iterations: # if too many iterations
-			print('Too many iterations.')
-			return return_path(current_node,maze)
-
 		open_list.pop(current_index)
 		closed_list.append(current_node)
 
 		if current_node == end_node: # found end node
 			return return_path(current_node, maze)
-
-		# all possible moves from one square to another
-		moves = [
-		[0,-1], # up
-		[1,0], # right
-		[0,1], # down
-		[-1,0], # left
-		[1,-1], # up right
-		[1,1], # down right
-		[-1,1], # down left
-		[-1,-1] # up left
-		]
 
 		# create children from all adjacent squares
 		children = []
@@ -109,8 +119,8 @@ def search(maze, start, end): # cost -> value of one transition
 			node_position = (current_node.position[0] + move[0], current_node.position[1] + move[1])
 
 			# check if possible (boundaries)
-			if node_position[0] > (num_rows - 1) or node_position[0] < 0 \
-			or node_position[1] > (num_cols - 1) or node_position[1] < 0:
+			if (node_position[0] > (num_rows - 1)) or node_position[0] < 0 \
+			or node_position[1] > ((num_cols - 1) or node_position[1] < 0):
 				continue
 
 			# walls -> 1-s
@@ -121,7 +131,9 @@ def search(maze, start, end): # cost -> value of one transition
 			new_node = Node(current_node, node_position)
 			children.append(new_node)
 
+
 		for child in children:
+
 			# check if in closed list
 			if child in closed_list:
 				continue
@@ -133,7 +145,7 @@ def search(maze, start, end): # cost -> value of one transition
 
 			# otherwise create initialize values
 			child.g = current_node.g + cost
-			child.h = (child.position[0] ** 2 - end_node.position[0] ** 2) + (child.position[1] ** 2 - end_node.position[1] ** 2)
+			child.h = (((child.position[0] - end_node.position[0]) ** 2) + ((child.position[1] - end_node.position[1]) ** 2))
 			child.f = child.g + child.h
 
 			# check if child is already in open_list and g is already lower
@@ -142,6 +154,122 @@ def search(maze, start, end): # cost -> value of one transition
 
 			# add children to open list and loop again
 			open_list.append(child)
+
+	if len(open_list) == 0:
+		print('Impossible')
+
+def search_with_steps(maze,start,end):
+
+	global children_rects
+	global closed_rects
+
+	start = [start[1],start[0]]
+	end = [end[1],end[0]]
+	start_node = Node(None, tuple(start))
+	start_node.g = start_node.f = start_node.h = 0
+	end_node = Node(None, tuple(end))
+	end_node.g = end_node.f = end_node.h = 0
+
+	open_list = [] # list with unvisited nodes 
+	closed_list = [] # list with visited nodes
+
+	open_list.append(start_node)
+
+	num_rows, num_cols = np.shape(maze) # number of rows and columns of maze
+
+	# all possible moves from one square to another
+	moves = [
+	[0,-1], # up
+	[1,0], # right
+	[0,1], # down
+	[-1,0], # left
+	[1,-1], # up right
+	[1,1], # down right
+	[-1,1], # down left
+	[-1,-1] # up left
+	]
+
+	children_rects = [] # for drawing possible children
+	closed_rects = []
+
+	# loop to end node
+	while len(open_list) > 0:
+                
+		current_node = open_list[0]
+		current_index = 0
+		for index,item in enumerate(open_list): # find 'the best' node
+			if item.f < current_node.f:
+				current_node = item
+				current_index = index
+
+		open_list.pop(current_index)
+		closed_list.append(current_node)
+
+		if current_node == end_node: # found end node
+			return return_path(current_node, maze)
+
+
+		# create children from all adjacent squares
+		children = []
+
+
+		for move in moves:
+			
+			node_position = (current_node.position[0] + move[0], current_node.position[1] + move[1])
+
+			# check if possible (boundaries)
+			if (node_position[0] > (num_rows - 1)) or node_position[0] < 0 \
+			or node_position[1] > ((num_cols - 1) or node_position[1] < 0):
+				continue
+
+			# walls -> 1-s
+			if maze[node_position[0]][node_position[1]] != 0:
+				continue
+
+			# create new children node
+			new_node = Node(current_node, node_position)
+			children.append(new_node)
+
+			# draw possible children and closed rectangles
+			for child in open_list:
+				rect = child.get_rect()
+				if rect not in children_rects:
+					children_rects.append(rect)
+
+			for done in closed_list:
+				done_rect = done.get_rect()
+				if done_rect not in closed_rects:
+					closed_rects.append(done_rect)
+
+			time.sleep(0.03)
+			
+			
+
+		for child in children:
+
+			# check if in closed list
+			if child in closed_list:
+				continue
+
+			#change the value of cost when diagonal child
+			cost = 1
+			if current_node.position[0] - child.position[0] != 0 and current_node.position[1] - child.position[1] != 0:
+				cost = 2
+
+			# otherwise create initialize values
+			child.g = current_node.g + cost
+			child.h = (((child.position[0] - end_node.position[0]) ** 2) + ((child.position[1] - end_node.position[1]) ** 2))
+			child.f = child.g + child.h
+
+			# check if child is already in open_list and g is already lower
+			if len([i for i in open_list if child == i and child.g > i.g]) > 0:
+				continue
+
+			# add children to open list and loop again
+			open_list.append(child)
+
+	if len(open_list) == 0:
+		print('Impossible')
 
 
 # environment
@@ -171,6 +299,8 @@ def get_point_pos(point_rect):
 
 
 def main():
+	global children_rects
+	global closed_rects
 	running = True
 	plains = []
 	sub_plains = []
@@ -248,6 +378,8 @@ def main():
 					walls.clear()
 					plains.clear()
 					path_list.clear()
+					children_rects.clear()
+					closed_rects.clear()
 					CLEAR = True
 
 					choose_start = True
@@ -263,14 +395,18 @@ def main():
 						start = get_point_pos(start_rect)
 						end = get_point_pos(end_rect)
 						maze_2d = np.reshape(maze_1d,(33,44))
-						path = search(maze_2d, start, end)
+						#path = search(maze_2d, start, end)
+						path = threading.Thread(target=search_with_steps,args=(maze_2d, start, end))
+						path.start()
+						#path = search_with_steps(maze_2d, start, end)
 						done = True
+						choose_walls = False
 
-						print('\n'.join([''.join(["{:" ">3d}".format(item) for item in row]) for row in maze_2d]))
+						#print('\n'.join([''.join(["{:" ">3d}".format(item) for item in row]) for row in maze_2d]))
 
-						print()
+						#print()
 
-						print('\n'.join([''.join(["{:" ">3d}".format(item) for item in row]) for row in path]))
+						#print('\n'.join([''.join(["{:" ">3d}".format(item) for item in row]) for row in path]))
 
 
 		# draws walls
@@ -286,23 +422,28 @@ def main():
 		if end_choosed: 
 			pygame.draw.rect(display,RED,end_rect)
 
-		
-		if done:
-			print(path)
+		'''
+		if done: 
 			for row in path:
 				for num in row:
 					if num > 0:
-						y = path.index(row)
-						x = row.index(num)
+						y = path.index(row) * 18 + 5
+						x = row.index(num) * 18 + 5
 						path_rect = draw_point(x,y,LIGHT_GREEN)
 						path_list.append(path_rect)
 				done = False
-
+		'''
 		if path_list:
 			for rect in path_list:
 				if rect != path_list[-1]:
 					pygame.draw.rect(display,LIGHT_GREEN,rect)
 		
+		for child in children_rects:
+				pygame.draw.rect(display,BLUE,child)
+
+		for done in closed_rects:
+			pygame.draw.rect(display,LIGHTER_GREEN,done)
+
 
 		pygame.display.update()
 		mainClock.tick(60)
