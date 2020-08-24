@@ -13,6 +13,7 @@ BLACK = (0,0,0)
 WHITE = (255,255,255)
 GREEN = (0,242,0)
 RED = (231,0,0)
+LIGHT_GREEN = (126, 186, 0)
 
 # A* algorithm	
 class Node(): 
@@ -49,7 +50,8 @@ def return_path(current_node, maze):
 	return result
 
 def search(maze, start, end): # cost -> value of one transition
-
+	start = [start[1],start[0]]
+	end = [end[1],end[0]]
 	start_node = Node(None, tuple(start))
 	start_node.g = start_node.f = start_node.h = 0
 	end_node = Node(None, tuple(end))
@@ -163,7 +165,9 @@ def draw_point(x,y, color):
 	return point_rect
 
 def get_point_pos(point_rect):
-	return (point_rect.x, point_rect.y)
+	x = (point_rect.x-5) // 18
+	y = (point_rect.y-5) // 18
+	return (x,y)
 
 
 def main():
@@ -172,9 +176,15 @@ def main():
 	sub_plains = []
 	walls = []
 	points = []
+	path_list = []
 	CLEAR = True
 	choose_start = True
 	choose_end = False
+	choose_walls = False
+	start_choosed = False
+	end_choosed = False
+	once = True
+	done = False
 	while running:
 
 		display.fill(BLACK)
@@ -184,16 +194,16 @@ def main():
 		
 
 		# draws plain
-		for i in range(44):
-			for j in range(33):
-				plain_rect = plain(5+i*18,5+j*18)
+		for i in range(33):
+			for j in range(44):
+				plain_rect = plain(5+j*18,5+i*18)
 				sub_plains.append(plain_rect)
 				if len(sub_plains) > 44*33: # prevent freezing
 					del sub_plains[-1:]
 
 		if CLEAR: # list of plain rectangles
 			plains = list(sub_plains)
-			maze = [0 for i in range(44*33)]
+			maze_1d = [0 for i in range(44*33)]
 			CLEAR = False
 
 		for event in pygame.event.get():
@@ -203,36 +213,96 @@ def main():
 				quit()
 			if left_pressed: 
 				# firstly = choose start and end point
-				if choose_start: # renders text 'Choose starting point', gives ability to choose it
-					choose_start = False
-					for pl in plains:
-						if pl.collidepoint(mx,my):
-							point_rect = draw_point(pl.x,pl.y,GREEN)
-							points.append(point_rect)
-							plains.remove(pl)
-
-
-			# left click - drawing walls
 				for pl in plains:
 					if pl.collidepoint(mx,my):
-						pos = plains.index(pl)
-						maze[pos] = 1
-						wall_rect = wall(pl.x,pl.y)
-						walls.append(wall_rect)
+						if choose_start: # renders text 'Choose starting point', gives ability to choose it
+							choose_start = False
+							start_choosed = True
+							start_rect = draw_point(pl.x,pl.y,GREEN)
+							start_rect_pos = plains.index(pl)
+							plains[start_rect_pos] = start_rect
+
+						if choose_end:
+							end_rect_pos = plains.index(pl)
+							if end_rect_pos != start_rect_pos:
+								choose_end = False
+								end_choosed = True
+								choose_walls = True
+								end_rect = draw_point(pl.x,pl.y,RED)
+								plains[end_rect_pos] = end_rect
+
+			# left click - drawing walls
+				if choose_walls:
+					for pl in plains:
+						if pl.collidepoint(mx,my):
+							wall_pos = plains.index(pl)
+							if wall_pos != end_rect_pos and wall_pos != start_rect_pos:
+								maze_1d[wall_pos] = 1
+								wall_rect = wall(pl.x,pl.y)
+								walls.append(wall_rect)
+								left_pressed = False
 
 
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_BACKSPACE: # clear walls and remake plains - list
 					walls.clear()
 					plains.clear()
+					path_list.clear()
 					CLEAR = True
+
+					choose_start = True
+					choose_end = False
+					once = True
+					start_choosed = False
+					end_choosed = False
+					done = False
+					path = None
+
+				if start_choosed and end_choosed:
+					if event.key == pygame.K_SPACE: # Start A* algorithm
+						start = get_point_pos(start_rect)
+						end = get_point_pos(end_rect)
+						maze_2d = np.reshape(maze_1d,(33,44))
+						path = search(maze_2d, start, end)
+						done = True
+
+						print('\n'.join([''.join(["{:" ">3d}".format(item) for item in row]) for row in maze_2d]))
+
+						print()
+
+						print('\n'.join([''.join(["{:" ">3d}".format(item) for item in row]) for row in path]))
+
 
 		# draws walls
 		for wl in walls:
 			pygame.draw.rect(display,BLACK,wl)
 
-		for point in points:
-			pygame.draw.rect(display,point)
+		
+		if start_choosed:
+			if once:
+				choose_end = True
+				once = False
+			pygame.draw.rect(display,GREEN,start_rect)
+		if end_choosed: 
+			pygame.draw.rect(display,RED,end_rect)
+
+		
+		if done:
+			print(path)
+			for row in path:
+				for num in row:
+					if num > 0:
+						y = path.index(row)
+						x = row.index(num)
+						path_rect = draw_point(x,y,LIGHT_GREEN)
+						path_list.append(path_rect)
+				done = False
+
+		if path_list:
+			for rect in path_list:
+				if rect != path_list[-1]:
+					pygame.draw.rect(display,LIGHT_GREEN,rect)
+		
 
 		pygame.display.update()
 		mainClock.tick(60)
@@ -241,7 +311,5 @@ def main():
 main()
 
 
-# learn A* algorithm
-# starting, ending point (A,B)
 # tick box if you want to see how the algorithm works
 # ENTER - start finding
