@@ -2,16 +2,18 @@ import pygame
 import numpy as np
 import time
 import threading
+from tkinter import *
+import tkinter as tk
 
 pygame.init() # initializing
 
-pygame.font.init()
-myfont = pygame.font.SysFont('Comic Sans MS', 30)
+myfont = pygame.font.SysFont('Arial', 40)
+font_small = pygame.font.SysFont('Arial', 20)
 
 w = 800
 h = 650
 display = pygame.display.set_mode((w,h))
-pygame.display.set_caption('A star tracking app')
+pygame.display.set_caption('A* path finder')
 mainClock = pygame.time.Clock()
 
 BLACK = (0,0,0)
@@ -21,12 +23,48 @@ RED = (231,0,0)
 LIGHT_GREEN = (126, 186, 0)
 BLUE = (94, 182, 202)
 LIGHTER_GREEN = (15, 216, 92)
+DARK_BLUE = (0, 0, 111)
 
+# global variables
 children_rects = []
 closed_rects = []
+show_steps = False
+show_steps_choosed = False
+impossible = False
+start_value = 0
 
-def draw_text()
-    pass
+def tick_box_window():
+	def change_bool():
+		global show_steps
+		if var.get() == 1:
+			show_steps = True
+		else:
+			show_steps = False
+	def close_window():
+		global show_steps_choosed
+		show_steps_choosed = True
+		root.destroy()
+	root = tk.Tk()
+	root.title('A* path finder')
+	root.geometry('230x100')
+	text = tk.Label(text='Would you like to see the steps?',width=30,height=3)
+	text.grid(row=0,column=0,sticky='nsew')
+	var = tk.IntVar()
+	checkbutton = tk.Checkbutton(root,text='Show steps',variable=var,onvalue=1,offvalue=0,command=change_bool)
+	checkbutton.grid(row=1,column=0,sticky='nsew')
+	button = tk.Button(text='Done',command=close_window,width=25)
+	button.grid(row=2,column=0)
+	root.mainloop()
+
+
+def draw_text(x,y, text, color):
+	the_text = myfont.render(text, False, color)
+	display.blit(the_text,(x,y))
+
+def draw_text_small(x,y, text, color):
+	the_text = font_small.render(text, False, color)
+	display.blit(the_text,(x,y))
+
 # A* algorithm	
 class Node(): 
 	# class for nodes - white rectangles
@@ -51,6 +89,7 @@ class Node():
 		return rect
 
 def return_path(current_node, maze):
+	global start_value
 	# returns the path of the search function
 	path = []
 	num_rows, num_cols = np.shape(maze) # the shape of maze
@@ -69,6 +108,8 @@ def return_path(current_node, maze):
 	return result
 
 def search(maze, start, end): # cost -> value of one transition
+	global impossible
+
 	start = [start[1],start[0]]
 	end = [end[1],end[0]]
 	start_node = Node(None, tuple(start))
@@ -156,12 +197,13 @@ def search(maze, start, end): # cost -> value of one transition
 			open_list.append(child)
 
 	if len(open_list) == 0:
-		print('Impossible')
+		impossible = True
 
 def search_with_steps(maze,start,end):
 
 	global children_rects
 	global closed_rects
+	global impossible
 
 	start = [start[1],start[0]]
 	end = [end[1],end[0]]
@@ -208,10 +250,8 @@ def search_with_steps(maze,start,end):
 		if current_node == end_node: # found end node
 			return return_path(current_node, maze)
 
-
 		# create children from all adjacent squares
 		children = []
-
 
 		for move in moves:
 			
@@ -230,7 +270,7 @@ def search_with_steps(maze,start,end):
 			new_node = Node(current_node, node_position)
 			children.append(new_node)
 
-			# draw possible children and closed rectangles
+			# draw children and closed rectangles
 			for child in open_list:
 				rect = child.get_rect()
 				if rect not in children_rects:
@@ -269,7 +309,8 @@ def search_with_steps(maze,start,end):
 			open_list.append(child)
 
 	if len(open_list) == 0:
-		print('Impossible')
+		impossible = True
+		
 
 
 # environment
@@ -301,6 +342,11 @@ def get_point_pos(point_rect):
 def main():
 	global children_rects
 	global closed_rects
+	global show_steps
+	global show_steps_choosed
+	global impossible
+	global start_value
+
 	running = True
 	plains = []
 	sub_plains = []
@@ -311,10 +357,16 @@ def main():
 	choose_start = True
 	choose_end = False
 	choose_walls = False
+	choose_steps = True
 	start_choosed = False
 	end_choosed = False
 	once = True
+	show_steps = False
+	second = False
+	wait = False
 	done = False
+	count_blocks = False
+	
 	while running:
 
 		display.fill(BLACK)
@@ -322,7 +374,6 @@ def main():
 		left_pressed, middle_pressed, right_pressed = pygame.mouse.get_pressed()
 		mx, my = pygame.mouse.get_pos()
 		
-
 		# draws plain
 		for i in range(33):
 			for j in range(44):
@@ -335,6 +386,7 @@ def main():
 			plains = list(sub_plains)
 			maze_1d = [0 for i in range(44*33)]
 			CLEAR = False
+
 
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -360,6 +412,7 @@ def main():
 								choose_walls = True
 								end_rect = draw_point(pl.x,pl.y,RED)
 								plains[end_rect_pos] = end_rect
+								
 
 			# left click - drawing walls
 				if choose_walls:
@@ -371,7 +424,14 @@ def main():
 								wall_rect = wall(pl.x,pl.y)
 								walls.append(wall_rect)
 								left_pressed = False
+								
+					
 
+			'''
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				if event.button == 1:
+					clicks.append((mx,my))
+			'''
 
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_BACKSPACE: # clear walls and remake plains - list
@@ -387,26 +447,49 @@ def main():
 					once = True
 					start_choosed = False
 					end_choosed = False
+					choose_steps = True
+					show_steps_choosed = False
+					show_steps = False
 					done = False
 					path = None
+					wait = False
+					impossible = False
+					start_value = 0
+					count_blocks = False
 
-				if start_choosed and end_choosed:
+				if end_choosed and show_steps_choosed:
 					if event.key == pygame.K_SPACE: # Start A* algorithm
+						
+						#shape the maze
 						start = get_point_pos(start_rect)
 						end = get_point_pos(end_rect)
 						maze_2d = np.reshape(maze_1d,(33,44))
-						#path = search(maze_2d, start, end)
-						path = threading.Thread(target=search_with_steps,args=(maze_2d, start, end))
-						path.start()
-						#path = search_with_steps(maze_2d, start, end)
-						done = True
-						choose_walls = False
+
+						# algorithm
+						if show_steps:
+							path_with_steps = threading.Thread(target=search_with_steps,args=(maze_2d, start, end))
+							path_with_steps.start()
+							choose_walls = False
+							wait = True
+							#path = search(maze_2d, start, end)
+						else:
+							done = True
+							choose_walls = False
+							path = search(maze_2d, start, end)
 
 						#print('\n'.join([''.join(["{:" ">3d}".format(item) for item in row]) for row in maze_2d]))
 
 						#print()
 
 						#print('\n'.join([''.join(["{:" ">3d}".format(item) for item in row]) for row in path]))
+
+		# texts
+		if choose_start:
+			draw_text(10,600,'Choose your start point',GREEN)
+		if choose_end:
+			draw_text(10,600,'Choose your end point',RED)
+		if choose_walls:
+			draw_text(10,600,'Draws walls or hit SPACE to start',WHITE)
 
 
 		# draws walls
@@ -422,35 +505,57 @@ def main():
 		if end_choosed: 
 			pygame.draw.rect(display,RED,end_rect)
 
-		'''
-		if done: 
-			for row in path:
-				for num in row:
-					if num > 0:
-						y = path.index(row) * 18 + 5
-						x = row.index(num) * 18 + 5
-						path_rect = draw_point(x,y,LIGHT_GREEN)
-						path_list.append(path_rect)
-				done = False
-		'''
-		if path_list:
-			for rect in path_list:
-				if rect != path_list[-1]:
-					pygame.draw.rect(display,LIGHT_GREEN,rect)
-		
+		# when showing steps
 		for child in children_rects:
 				pygame.draw.rect(display,BLUE,child)
 
 		for done in closed_rects:
-			pygame.draw.rect(display,LIGHTER_GREEN,done)
+			pygame.draw.rect(display,(203, 253, 0),done)
+
+		
+		if not impossible:
+			if not show_steps:
+				if done and path: 
+					for row in path:
+						for num in row:
+							if num > 0:
+								y = path.index(row) * 18 + 5
+								x = row.index(num) * 18 + 5
+								path_rect = draw_point(x,y,LIGHT_GREEN)
+								path_list.append(path_rect)
+						done = False
+						count_blocks = True
+			else:
+				if wait and threading.active_count() == 1:
+					path = search(maze_2d, start, end)
+					show_steps = False
+					done = True
+			if count_blocks:
+				draw_text(10,600,f'The shortest path is {start_value-1} blocks long.',GREEN)
+				draw_text_small(650,600,'BACKSPACE',WHITE)
+				draw_text_small(658,622,'to try again',WHITE)
+		else:
+			draw_text(10,600,'Path is not possible to be found',RED)
+		
+		# when done
+		if path_list:
+			pygame.draw.rect(display,GREEN,start_rect)
+			for rect in path_list:
+				if rect.x == end_rect.x and rect.y == end_rect.y:
+					pygame.draw.rect(display,DARK_BLUE,rect)
+				else:
+					pygame.draw.rect(display,GREEN,rect)
+				
+				
 
 
 		pygame.display.update()
 		mainClock.tick(60)
 
+		if choose_steps:
+			# tick box
+			tick_box_window()
+			choose_steps = False
 
 main()
 
-
-# tick box if you want to see how the algorithm works
-# ENTER - start finding
