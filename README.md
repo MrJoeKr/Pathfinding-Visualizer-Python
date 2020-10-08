@@ -8,4 +8,5 @@ My very own A* search algorithm made in python with the use of module - pygame.
     - threading
     
 That's all. Enjoy :)
+
 - MrJoeKr
