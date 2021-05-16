@@ -6,6 +6,8 @@ My very own A* search algorithm made in python with the use of module pygame.
   - modules:
     - pygame
     - threading
+    - numpy
+    - tkinter
     
 That's all. Enjoy :)
 
