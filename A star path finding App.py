@@ -339,11 +339,9 @@ def search_with_steps(maze,start,end):
                 done_pos_list.append(done_pos)
                 closed_rects.append(done_rect)
             else:
-                #print(done_pos,'same')
                 pass
 
         time.sleep(0.01)
-        #print(len(open_list),len(closed_list))
 
     if len(open_list) == 0:
         impossible = True
@@ -509,11 +507,6 @@ def main():
                             choose_walls = False
                             path = search(maze_2d, start, end)
 
-                        #print('\n'.join([''.join(["{:" ">3d}".format(item) for item in row]) for row in maze_2d]))
-
-                        #print()
-
-                        #print('\n'.join([''.join(["{:" ">3d}".format(item) for item in row]) for row in path]))
 
         # texts
         if choose_start:
