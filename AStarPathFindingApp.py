@@ -2,20 +2,24 @@ import pygame
 import numpy as np
 import time
 import threading
+from typing import List, Optional
 # Project files
 import tkinterWindow
 from NodeObject import Node
+import NodeObject
 
 pygame.init() # initializing
 
 myfont = pygame.font.SysFont('Arial', 40)
 font_small = pygame.font.SysFont('Arial', 20)
 
-w = 800
-h = 650
-display = pygame.display.set_mode((w,h))
+WIDTH = 800
+HEIGTH = 650
+DISPLAY = pygame.display.set_mode((WIDTH, HEIGTH))
 pygame.display.set_caption('A* path finder')
 mainClock = pygame.time.Clock()
+
+BOTTOM_PANEL_HEIGHT = 50
 
 BLACK = (0,0,0)
 WHITE = (255,255,255)
@@ -38,11 +42,11 @@ path = []
 
 def draw_text(x,y, text, color):
     the_text = myfont.render(text, False, color)
-    display.blit(the_text,(x,y))
+    DISPLAY.blit(the_text,(x,y))
 
 def draw_text_small(x,y, text, color):
     the_text = font_small.render(text, False, color)
-    display.blit(the_text,(x,y))
+    DISPLAY.blit(the_text,(x,y))
 
 # A* algorithm  
 def return_path(current_node, maze):
@@ -306,7 +310,7 @@ def plain(x,y):
     return plain_rect
 
 def draw_plain(plain_rect):
-    pygame.draw.rect(display,WHITE,plain_rect)
+    pygame.draw.rect(DISPLAY,WHITE,plain_rect)
 
 def wall(x,y):
     a = 15
@@ -314,12 +318,12 @@ def wall(x,y):
     return wall_rect
 
 def draw_wall(wall_rect):
-    pygame.draw.rect(display,BLACK,wall_rect)
+    pygame.draw.rect(DISPLAY,BLACK,wall_rect)
 
 def draw_point(x, y, color):
     a = 15
     point_rect = pygame.Rect(x,y,a,a)
-    pygame.draw.rect(display,color,point_rect)
+    pygame.draw.rect(DISPLAY,color,point_rect)
     return point_rect
 
 def get_point_pos(point_rect):
@@ -327,7 +331,19 @@ def get_point_pos(point_rect):
     y = (point_rect.y-5) // 18
     return (x,y)
 
-def main():
+def init_draw_board(rows: int, cols: int) -> List[List[Node]]:
+    out = []
+    for y in range(rows):
+        sub = []
+        out.append(sub)
+        for x in range(cols):
+            node = Node(parent=None, position=(x, y))
+            sub.append(node)
+            node.draw_display(DISPLAY)
+    
+    return out
+
+def run_app():
     global children_rects
     global closed_rects
     global show_steps
@@ -354,9 +370,13 @@ def main():
     second = False
     count_blocks = False
     
-    while running:
+    rows = 40
+    cols = 53
+    # Initialize board
+    DISPLAY.fill(BLACK)
+    node_list = init_draw_board(rows, cols)
 
-        display.fill(BLACK)
+    while running:
 
         left_pressed, middle_pressed, right_pressed = pygame.mouse.get_pressed()
         mx, my = pygame.mouse.get_pos()
@@ -373,8 +393,8 @@ def main():
             CLEAR = False
 
         #draws them
-        for rect in plains:
-            draw_plain(rect)
+        # for rect in plains:
+        #     draw_plain(rect)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -382,36 +402,55 @@ def main():
                 pygame.quit()
 
             if left_pressed: 
-                # firstly = choose start and end point
-                for pl in plains:
-                    if pl.collidepoint(mx,my):
-                        if choose_start: # renders text 'Choose starting point', gives ability to choose it
-                            choose_start = False
-                            start_choosed = True
-                            start_rect = draw_point(pl.x,pl.y,GREEN)
-                            start_rect_pos = plains.index(pl)
-                            plains[start_rect_pos] = start_rect
+                # Choose start and end point
+                node_x = mx // NodeObject.SQUARE_SIZE
+                node_y = my // NodeObject.SQUARE_SIZE
+                node: Optional[Node] = None
 
-                        if choose_end:
-                            end_rect_pos = plains.index(pl)
-                            if end_rect_pos != start_rect_pos:
-                                choose_end = False
-                                end_choosed = True
-                                choose_walls = True
-                                end_rect = draw_point(pl.x,pl.y,RED)
-                                plains[end_rect_pos] = end_rect
+                if node_y < rows and node_x < cols:
+                    node = node_list[node_y][node_x]
+
+                if node is not None:
+                    if choose_start: # renders text 'Choose starting point', gives ability to choose it
+                        choose_start = False
+                        choose_end = True
+                        # start_rect = draw_point(node.x,node.y,GREEN)
+                        # start_rect_pos = plains.index(node)
+                        # plains[start_rect_pos] = start_rect
+
+                        start_rect = node.get_rect()
+                        node.set_color(GREEN)
+                        node.draw_display(DISPLAY)
+
+                    elif choose_end:
+                        # end_rect_pos = plains.index(node)
+                        end_rect = node.get_rect()
+                        if start_rect != end_rect:
+                            choose_end = False
+                            end_choosed = True
+                            choose_walls = True
+                            # end_rect = draw_point(node.x,node.y,RED)
+                            # plains[end_rect_pos] = end_rect
+
+                            node.set_color(RED)
+                            node.draw_display(DISPLAY)
                                 
 
-            # left click - drawing walls
-                if choose_walls:
-                    for pl in plains:
-                        if pl.collidepoint(mx,my):
-                            wall_pos = plains.index(pl)
-                            if wall_pos != end_rect_pos and wall_pos != start_rect_pos:
-                                maze_1d[wall_pos] = 1
-                                wall_rect = wall(pl.x,pl.y)
-                                walls.append(wall_rect)
-                                left_pressed = False
+                    # left click - drawing walls
+                    # TODO -> Finish
+                    elif choose_walls:
+                        node.set_color(BLACK)
+                        node.draw_display(DISPLAY)
+
+                        # for pl in plains:
+                        #     if pl.collidepoint(mx,my):
+                                # wall_pos = plains.index(pl)
+
+                                # if wall_pos != end_rect_pos and wall_pos != start_rect_pos:
+                                #     maze_1d[wall_pos] = 1
+                                #     wall_rect = wall(pl.x,pl.y)
+                                #     walls.append(wall_rect)
+                                #     left_pressed = False
                                 
                     
             if event.type == pygame.KEYDOWN:
@@ -458,10 +497,13 @@ def main():
 
         # texts
         if choose_start:
+            pygame.draw.rect(DISPLAY, BLACK, pygame.Rect(0, HEIGTH - BOTTOM_PANEL_HEIGHT, WIDTH, BOTTOM_PANEL_HEIGHT))
             draw_text(10,600,'Choose your start point',GREEN)
         if choose_end:
+            pygame.draw.rect(DISPLAY, BLACK, pygame.Rect(0, HEIGTH - BOTTOM_PANEL_HEIGHT, WIDTH, BOTTOM_PANEL_HEIGHT))
             draw_text(10,600,'Choose your end point',RED)
         if choose_walls:
+            pygame.draw.rect(DISPLAY, BLACK, pygame.Rect(0, HEIGTH - BOTTOM_PANEL_HEIGHT, WIDTH, BOTTOM_PANEL_HEIGHT))
             draw_text(10,600,'Draws walls or hit SPACE to start',WHITE)
 
 
@@ -469,20 +511,15 @@ def main():
         for wl in walls:
             draw_wall(wl)
 
-        if start_choosed:
-            if once:
-                choose_end = True
-                once = False
-            pygame.draw.rect(display,GREEN,start_rect)
-        if end_choosed: 
-            pygame.draw.rect(display,RED,end_rect)
+        # if end_choosed: 
+        #     pygame.draw.rect(DISPLAY,RED,end_rect)
 
         # when showing steps
         for child in children_rects:
-                pygame.draw.rect(display,BLUE,child)
+                pygame.draw.rect(DISPLAY,BLUE,child)
 
         for done in closed_rects:
-            pygame.draw.rect(display,(203, 253, 0),done)
+            pygame.draw.rect(DISPLAY,(203, 253, 0),done)
 
         #create path in GUI
         if not impossible:
@@ -506,12 +543,12 @@ def main():
         
         # when done
         if path_list:
-            pygame.draw.rect(display,GREEN,start_rect)
+            pygame.draw.rect(DISPLAY,GREEN,start_rect)
             for rect in path_list:
                 if rect.x == end_rect.x and rect.y == end_rect.y:
-                    pygame.draw.rect(display,DARK_BLUE,rect)
+                    pygame.draw.rect(DISPLAY,DARK_BLUE,rect)
                 else:
-                    pygame.draw.rect(display,GREEN,rect)
+                    pygame.draw.rect(DISPLAY,GREEN,rect)
                 
                 
 
@@ -523,3 +560,7 @@ def main():
             tkinterWindow.tick_box_window()
             choose_steps = False
 
+
+# TODO: REMOVE
+if __name__ == "__main__":
+    run_app()
