@@ -432,7 +432,7 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
                 pygame.quit()
-                sys.exit()
+
             if left_pressed: 
                 # firstly = choose start and end point
                 for pl in plains:
