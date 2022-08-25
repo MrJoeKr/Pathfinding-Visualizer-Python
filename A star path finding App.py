@@ -2,9 +2,8 @@ import pygame
 import numpy as np
 import time
 import threading
-# Project files
-import tkinterWindow
-from NodeObject import Node
+from tkinter import *
+import tkinter as tk
 
 pygame.init() # initializing
 
@@ -36,6 +35,30 @@ start_value = 0
 wait = False
 path = []
 
+def tick_box_window():
+    def change_bool():
+        global show_steps
+        if var.get() == 1:
+            show_steps = True
+        else:
+            show_steps = False
+    def close_window():
+        global show_steps_choosed
+        show_steps_choosed = True
+        root.destroy()
+    root = tk.Tk()
+    root.title('A* path finder')
+    root.geometry('230x100')
+    text = tk.Label(text='Would you like to see the steps?',width=30,height=3)
+    text.grid(row=0,column=0,sticky='nsew')
+    var = tk.IntVar()
+    checkbutton = tk.Checkbutton(root,text='Show steps',variable=var,onvalue=1,offvalue=0,command=change_bool)
+    checkbutton.grid(row=1,column=0,sticky='nsew')
+    button = tk.Button(text='Done',command=close_window,width=25)
+    button.grid(row=2,column=0)
+    root.mainloop()
+
+
 def draw_text(x,y, text, color):
     the_text = myfont.render(text, False, color)
     display.blit(the_text,(x,y))
@@ -45,6 +68,33 @@ def draw_text_small(x,y, text, color):
     display.blit(the_text,(x,y))
 
 # A* algorithm  
+class Node(): 
+    # class for nodes - white rectangles
+    # 3 variables - g,h,f
+    # f = g + h
+    def __init__(self, parent=None, position=None):
+        self.parent = parent
+        self.position = position
+        self.g = 0
+        self.h = 0
+        self.f = 0
+
+    def __eq__(self,other):
+        # check equality with another node
+        return self.position == other.position
+
+    def get_rect(self):
+        a = 15
+        x = self.position[1] * 18 + 5 
+        y = self.position[0] * 18 + 5
+        rect = pygame.Rect(x,y,a,a)
+        return rect
+
+    def get_pos(self):
+        x = self.position[1] * 18 + 5 
+        y = self.position[0] * 18 + 5
+        return (x,y)
+
 def return_path(current_node, maze):
     global start_value
     global wait
@@ -316,7 +366,7 @@ def wall(x,y):
 def draw_wall(wall_rect):
     pygame.draw.rect(display,BLACK,wall_rect)
 
-def draw_point(x, y, color):
+def draw_point(x,y, color):
     a = 15
     point_rect = pygame.Rect(x,y,a,a)
     pygame.draw.rect(display,color,point_rect)
@@ -327,6 +377,7 @@ def get_point_pos(point_rect):
     y = (point_rect.y-5) // 18
     return (x,y)
 
+
 def main():
     global children_rects
     global closed_rects
@@ -335,6 +386,7 @@ def main():
     global impossible
     global start_value
     global wait
+    global pat
 
     running = True
     plains = []
@@ -361,7 +413,7 @@ def main():
         left_pressed, middle_pressed, right_pressed = pygame.mouse.get_pressed()
         mx, my = pygame.mouse.get_pos()
         
-        # Create a list of plain rects and then draws them
+        # firstly creates a list of plain rects and then draws them
         if CLEAR:
             for i in range(33):
                 for j in range(44):
@@ -499,8 +551,8 @@ def main():
             
             if count_blocks:
                 draw_text(10,600,f'The shortest path is {start_value-1} blocks long.',GREEN)
-                draw_text_small(650,600,'Press BACKSPACE',WHITE)
-                draw_text_small(658,622,'to reset the board',WHITE)
+                draw_text_small(650,600,'BACKSPACE',WHITE)
+                draw_text_small(658,622,'to try again',WHITE)
         else:
             draw_text(10,600,'Path is not possible to be found',RED)
         
@@ -520,6 +572,7 @@ def main():
 
         if choose_steps:
             # tick box
-            tkinterWindow.tick_box_window()
+            tick_box_window()
             choose_steps = False
 
+main()
