@@ -68,6 +68,22 @@ class Node():
         self.color = color
         self.draw_display()
 
+    def draw_as_circle(self, color: Color) -> None:
+        x, y = self.draw_position[0], self.draw_position[1]
+
+        self.color = color
+        
+        center = \
+            (x + self.width / 2 + FOREGROUND_PADDING, 
+            y + self.width / 2 + FOREGROUND_PADDING)
+
+        pygame.draw.circle(
+            self.display,
+            color,
+            center,
+            self.width / 2,
+        )
+
     def set_wall(self) -> None:
         self._is_wall = True
         self.draw_display()
