@@ -18,8 +18,8 @@ TICK_BOX_WIDTH = 30
 _TICK_BOX_CLICK_DELAY = 0.1
 
 # TODO:
-#   - reset board and window
-
+#   - Deleting start / end / wall nodes could be dynamic
+#   - Path would be updated according to change
 
 class BoardWindow:
 
@@ -151,8 +151,8 @@ class BoardWindow:
                 if event.key == pygame.K_BACKSPACE or event.key == pygame.K_r:
                     self.reset_board_window()
 
-                # Start the algorithm
-                if self.board.end_node is not None and event.key == pygame.K_SPACE:
+                # Start the algorithm (only once in this version - dynamically updated later)
+                if not self.board.finding_path_finished and self.board.end_node is not None and event.key == pygame.K_SPACE:
 
                     show_steps = self.tick_box.is_ticked()
 
