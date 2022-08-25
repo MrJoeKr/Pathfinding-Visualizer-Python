@@ -1,14 +1,15 @@
 from typing import Callable, List, Optional, Tuple, Deque
+# Priority queue
 from heapq import heappop, heappush
 from collections import deque
 import threading
-# import concurrent.futures
 import time
 import pygame
 
 from node_board_object import NodeBoard
 from node_object import Node
-import color_constants
+from config_constants import OPEN_NODES_COLOR, CLOSED_NODES_COLOR
+from color_constants import Color
 
 # all possible moves from one square to another
 MOVES = [
@@ -28,7 +29,7 @@ SHOW_STEPS_DELAY = 0.008
 Board = List[List[Node]]
 Heuristic_Function = Callable[[Node, Node], int]
 Path_List = List[Node]
-Draw_Deque = Deque[Tuple[color_constants.Color, Node]]
+Draw_Deque = Deque[Tuple[Color, Node]]
 Search_Function = Callable[[NodeBoard, Path_List, Optional[Draw_Deque], Heuristic_Function], None]
 
 def manhattan_distance(node_a: Node, node_b: Node) -> int:
@@ -77,7 +78,7 @@ def search_a_star(
         # Best node so far
         if draw_queue is not None:
             # print("Appending node")
-            draw_queue.append((color_constants.GREEN, node))
+            draw_queue.append((OPEN_NODES_COLOR, node))
 
         if node == board.end_node:
             get_path_list(out_path_list, node)
@@ -107,7 +108,7 @@ def search_a_star(
             heappush(heap, (f, child_node.y, child_node.x))
 
             if draw_queue:
-                draw_queue.append((color_constants.LIGHT_BLUE, child_node))
+                draw_queue.append((CLOSED_NODES_COLOR, child_node))
 
     # No path found
     return
