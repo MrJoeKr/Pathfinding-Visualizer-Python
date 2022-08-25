@@ -29,7 +29,7 @@ def draw_text_small(x,y, text, color):
 
 
 def run_app():
-    running = True
+    # running = True
     
     DISPLAY.fill(BLACK)
 
@@ -38,36 +38,11 @@ def run_app():
 
     board = app_window.get_node_board()
 
-    while running:
+    while app_window.running:
 
         app_window.process_mouse_events()
 
-        # Process keys
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-                pygame.quit()
-                    
-            if event.type == pygame.KEYDOWN:
-                
-                # Quit with escape
-                if event.key == pygame.K_ESCAPE:
-                    running = False
-                    pygame.quit()
-
-                # Reset board
-                if event.key == pygame.K_BACKSPACE:
-                    
-                    board.start_node = None
-                    board.end_node = None
-                    # TODO : Not working properly
-                    board = NodeBoard(DISPLAY, ROWS, COLS)
-
-                # Start the algorithm
-                if board.end_node is not None and event.key == pygame.K_SPACE:
-                    print("starting algorithm")
-                    path = search_path(board, show_steps=True)
-                    print("Done")
+        app_window.process_key_events()
 
         # Texts for drawing
         # if board.start_node is None:
