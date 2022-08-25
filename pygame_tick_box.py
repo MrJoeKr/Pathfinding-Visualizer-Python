@@ -61,6 +61,15 @@ class TickBox:
 
             pygame.draw.line(self.display, color_constants.GREEN, start_pos, end_pos)
 
+            start_pos = \
+                (self.x + self.foreground_padding, self.y - self.foreground_padding + self.width)
+
+            end_pos = \
+                (self.x + self.width - self.foreground_padding, self.y + self.foreground_padding)
+
+            pygame.draw.line(self.display, color_constants.GREEN, start_pos, end_pos)
+
+
         return self.ticked
 
     def is_ticked(self):
