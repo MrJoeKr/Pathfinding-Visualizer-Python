@@ -1,4 +1,4 @@
-import AStarPathFindingApp
+import a_star_path_finding_app
 
 if __name__ == "__main__":
-    AStarPathFindingApp.run_app()
+    a_star_path_finding_app.run_app()
