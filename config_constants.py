@@ -10,7 +10,7 @@ ROWS = 40
 COLS = 53
 
 # The delay needs to be bigger than the time of the path-finding algorithm
-SHOW_STEPS_DELAY = 0.008
+SHOW_STEPS_DELAY = 0.001
 SHOW_PATH_DELAY = 0.01
 
 # Node properties
