@@ -24,10 +24,10 @@ MOVES = [
 ]
 
 Board = List[List[Node]]
-Heuristic_Function = Callable[[Node, Node], int]
+HeuristicFunction = Callable[[Node, Node], int]
 PathList = List[Node]
 DrawDeque = Deque[Tuple[Color, Node]]
-SearchFunction = Callable[[NodeBoard, PathList, Optional[DrawDeque], Heuristic_Function], None]
+SearchFunction = Callable[[NodeBoard, Optional[DrawDeque], HeuristicFunction], None]
 
 
 def manhattan_distance(node_a: Node, node_b: Node) -> int:
@@ -57,9 +57,8 @@ def euclidian_distance(node_a: Node, node_b: Node) -> int:
 # Return path list
 def search_a_star(
         board: NodeBoard,
-        out_path_list: PathList,
         draw_queue: Optional[DrawDeque],
-        heuristic: Heuristic_Function) -> None:
+        heuristic: HeuristicFunction) -> None:
 
     # Init priority queue
     # (node.f, node.y, node.x)
@@ -81,7 +80,7 @@ def search_a_star(
             draw_queue.append((OPEN_NODES_COLOR, node))
 
         if node == board.end_node:
-            get_path_list(out_path_list, node)
+            get_path_list(board.path, node)
             return
 
         for add_x, add_y in MOVES:
@@ -118,19 +117,16 @@ def search_path(
         board: NodeBoard,
         show_steps: bool=False,
         search_func: SearchFunction=search_a_star,
-        heuristic: Heuristic_Function=euclidian_distance) -> List[Node]:
-
-    path: PathList = []
+        heuristic: HeuristicFunction=euclidian_distance) -> None:
 
     if not show_steps:
         # Threading not needed
-        search_func(board, path, None, heuristic)
-        return path
+        search_func(board, None, heuristic)
 
     draw_queue: DrawDeque = deque()
 
     thread = threading.Thread(
-        target=search_func, args=(board, path, draw_queue, heuristic))
+        target=search_func, args=(board, draw_queue, heuristic))
     thread.start()
 
     # Draw nodes
@@ -145,10 +141,9 @@ def search_path(
 
         # Speed of drawing
         time.sleep(SHOW_STEPS_DELAY)
-    
-    # print("Leaving search function")
-    return path
 
+    board.finding_path_finished = True
+    
 
 def get_path_list(out_path_list: List[Node], end_node: Node) -> None:
 
