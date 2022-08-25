@@ -15,7 +15,7 @@ _TICK_BOX_CLICK_DELAY = 0.1
 # TODO:
 #   - reset board and window
 
-class AppObject:
+class BoardWindow:
 
     def __init__(
             self, display: pygame.display, rows: int, cols: int):
