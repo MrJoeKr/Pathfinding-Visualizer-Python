@@ -1,6 +1,8 @@
 from typing import List, Optional
 import pygame
+import time
 
+from config_constants import *
 from node_object import Node
 
 class NodeBoard:
@@ -37,3 +39,19 @@ class NodeBoard:
 
     def get_node(self, y: int, x: int):
         return self.board[y][x]
+
+    def draw_path(self, path: List[Node]) -> None:
+
+        node_color = PATH_NODES_COLOR
+
+        for node in path:
+            node.set_color(node_color)
+
+            if node == path[0]:
+                node.draw_as_circle(START_POINT_COLOR)
+
+            elif node == path[-1]:
+                node.draw_as_circle(END_POINT_COLOR)
+
+            pygame.display.update()
+            time.sleep(SHOW_PATH_DELAY)
