@@ -7,6 +7,10 @@ DISPLAY_HEIGTH = 650
 ROWS = 40
 COLS = 53
 
+# The delay needs to be bigger than the time of the path-finding algorithm
+SHOW_STEPS_DELAY = 0.008
+SHOW_PATH_DELAY = 0.01
+
 # Node properties
 NODE_SIZE = 15
 FOREGROUND_PADDING = 1
