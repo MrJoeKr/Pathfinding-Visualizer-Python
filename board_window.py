@@ -10,6 +10,7 @@ from node_board_object import NodeBoard
 from node_object import Node
 from path_finding_algorithm import search_path
 from pygame_tick_box import TickBox
+from text_panel import TextPanel
 
 BOTTOM_PANEL_HEIGHT = 50
 TICK_BOX_WIDTH = 30
@@ -32,6 +33,11 @@ class BoardWindow:
             DISPLAY_WIDTH - TICK_BOX_WIDTH - DISPLAY_WIDTH / 30,
             DISPLAY_HEIGTH - BOTTOM_PANEL_HEIGHT + 5,
             TICK_BOX_WIDTH)
+
+        # Text panel
+        self.text_panel = TextPanel(
+            display, 0, DISPLAY_HEIGTH - BOTTOM_PANEL_HEIGHT, DISPLAY_WIDTH,
+            BOTTOM_PANEL_HEIGHT, color_constants.BLACK)
 
         # Used for tick box threading to wait between clicks
         self._tick_box_executed: bool = False
@@ -56,12 +62,12 @@ class BoardWindow:
                 if board.start_node is None:
 
                     board.start_node = node
-                    node.set_color(START_POINT_COLOR)
+                    node.draw_as_circle(START_POINT_COLOR)
 
                 elif board.end_node is None and node != board.start_node:
 
                     board.end_node = node
-                    node.set_color(END_POINT_COLOR)
+                    node.draw_as_circle(END_POINT_COLOR)
 
                 # Draw walls
                 elif board.end_node is not None and node != board.end_node and node != board.start_node and not node.is_wall():
@@ -89,6 +95,20 @@ class BoardWindow:
             self.tick_box.tick_untick_box()
             self._tick_box_executed = True
             self._wait_for_next_execution_thread()
+
+    def draw_text(self) -> None:
+        
+        self.text_panel.clear_panel()
+        text_margin_left = 5
+
+        if self.board.start_node is None:
+            self.text_panel.write_text(0 + text_margin_left, 0, "Choose start point", START_POINT_COLOR)
+        
+        elif self.board.end_node is None:
+            self.text_panel.write_text(0 + text_margin_left, 0, "Choose end point", END_POINT_COLOR)
+        
+        elif self.board.end_node is not None:
+            self.text_panel.write_text(0 + text_margin_left, 0, "Draw walls or press SPACE to start", color_constants.WHITE)
 
     def show_steps(self) -> bool:
         return self.tick_box.is_ticked()
@@ -124,7 +144,7 @@ class BoardWindow:
 
                 # Start the algorithm
                 if self.board.end_node is not None and event.key == pygame.K_SPACE:
-                    
+
                     show_steps = self.tick_box.is_ticked()
                     print(show_steps)
 
@@ -133,19 +153,10 @@ class BoardWindow:
                         self.board, show_steps=show_steps)
                     # print("Done")
 
-                    self.draw_path(path)
+                    self.board.draw_path(path)
 
     def reset_board_window(self) -> None:
         self.board.reset_board()
-
-    def draw_path(self, path: List[Node]) -> None:
-
-        node_color = PATH_NODES_COLOR
-
-        for node in path:
-            node.set_color(node_color)
-            pygame.display.update()
-            time.sleep(SHOW_PATH_DELAY)
 
     def _wait_for_next_execution_thread(self) -> None:
         threading.Thread(target=self._help_wait).start()
