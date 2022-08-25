@@ -1,12 +1,15 @@
-from typing import List, Optional
+from typing import Deque, List, Optional
 import pygame
 import threading
 import time
-from config_constants import END_POINT_COLOR, START_POINT_COLOR
+from collections import deque
+
+from config_constants import *
+from color_constants import Color
 from node_board_object import NodeBoard
 from node_object import Node
+from path_finding_algorithm import search_path
 from pygame_tick_box import TickBox
-from config_constants import *
 
 BOTTOM_PANEL_HEIGHT = 50
 TICK_BOX_WIDTH = 30
@@ -14,6 +17,7 @@ _TICK_BOX_CLICK_DELAY = 0.1
 
 # TODO:
 #   - reset board and window
+
 
 class BoardWindow:
 
@@ -24,13 +28,15 @@ class BoardWindow:
 
         # Initialize tick box
         self.tick_box: TickBox = TickBox(
-            display, 
-            DISPLAY_WIDTH - TICK_BOX_WIDTH - DISPLAY_WIDTH / 30, 
-            DISPLAY_HEIGTH - BOTTOM_PANEL_HEIGHT + 5, 
+            display,
+            DISPLAY_WIDTH - TICK_BOX_WIDTH - DISPLAY_WIDTH / 30,
+            DISPLAY_HEIGTH - BOTTOM_PANEL_HEIGHT + 5,
             TICK_BOX_WIDTH)
 
         # Used for tick box threading to wait between clicks
         self._tick_box_executed: bool = False
+
+        self.running = True
 
     def get_node_board(self) -> NodeBoard:
         return self.board
@@ -83,7 +89,7 @@ class BoardWindow:
             self.tick_box.tick_untick_box()
             self._tick_box_executed = True
             self._wait_for_next_execution_thread()
-        
+
     def show_steps(self) -> bool:
         return self.tick_box.is_ticked()
 
@@ -101,12 +107,49 @@ class BoardWindow:
         return node
 
     # TODO
-    def process_key_events() -> None:
-        pass
+    # Process keys
+    def process_key_events(self) -> None:
 
-    def _wait_for_next_execution_thread(self):
+        for event in pygame.event.get():
+            # Quit app
+            if event.type == pygame.QUIT or (
+                    event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                self.running = False
+                pygame.quit()
+
+            if event.type == pygame.KEYDOWN:
+                # Reset board
+                if event.key == pygame.K_BACKSPACE:
+                    self.reset_board_window()
+
+                # Start the algorithm
+                if self.board.end_node is not None and event.key == pygame.K_SPACE:
+                    
+                    show_steps = self.tick_box.is_ticked()
+                    print(show_steps)
+
+                    # print("Starting algorithm")
+                    path = search_path(
+                        self.board, show_steps=show_steps)
+                    # print("Done")
+
+                    self.draw_path(path)
+
+    def reset_board_window(self) -> None:
+        self.board.reset_board()
+
+    def draw_path(self, path: List[Node]) -> None:
+
+        node_color = PATH_NODES_COLOR
+
+        for node in path:
+            node.set_color(node_color)
+            pygame.display.update()
+            time.sleep(SHOW_PATH_DELAY)
+
+    def _wait_for_next_execution_thread(self) -> None:
         threading.Thread(target=self._help_wait).start()
 
-    def _help_wait(self):
+    def _help_wait(self) -> None:
         time.sleep(_TICK_BOX_CLICK_DELAY)
         self._tick_box_executed = False
