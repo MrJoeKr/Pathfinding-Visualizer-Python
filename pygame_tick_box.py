@@ -64,4 +64,4 @@ class TickBox:
         return self.ticked
 
     def is_ticked(self):
-        return self.is_ticked
+        return self.ticked
