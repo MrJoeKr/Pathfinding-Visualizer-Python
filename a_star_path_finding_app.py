@@ -2,7 +2,7 @@ import pygame
 
 # Project files
 from node_board_object import NodeBoard
-from app_window import AppObject
+from board_window import BoardWindow
 from color_constants import *
 from config_constants import *
 from path_finding_algorithm import search_path
@@ -34,7 +34,7 @@ def run_app():
     DISPLAY.fill(BLACK)
 
     # Initialize window object
-    app_window = AppObject(DISPLAY, ROWS, COLS)
+    app_window = BoardWindow(DISPLAY, ROWS, COLS)
 
     board = app_window.get_node_board()
 
