@@ -27,5 +27,13 @@ class NodeBoard:
         
         return out
 
+    def reset_board(self):
+        self.start_node = None
+        self.end_node = None
+        self.board = self._init_draw_board()
+
     def get_board(self):
         return self.board
+
+    def get_node(self, y: int, x: int):
+        return self.board[y][x]
