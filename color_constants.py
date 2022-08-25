@@ -1,12 +1,11 @@
 BLACK = (0,0,0)
 WHITE = (255,255,255)
-GREEN = (0,242,0)
+GREEN = (132, 209, 66)
 RED = (231,0,0)
-LIGHT_GREEN = (126, 186, 0)
-LIGHT_BLUE = (15, 181, 214)
-BLUE = (94, 182, 202)
-LIGHTER_GREEN = (15, 216, 92)
-DARK_BLUE = (0, 0, 111)
+BLUE = (66, 132, 209)
+LIGHT_BLUE = (66, 170, 209)
+LIGHT_GREEN = (66, 209, 104)
+YELLOW = (237, 239, 36)
 
 # Color type - RGB
 from typing import Tuple
