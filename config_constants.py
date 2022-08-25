@@ -14,5 +14,10 @@ WALL_COLOR = color_constants.BLACK
 NODE_COLOR = color_constants.WHITE
 NODE_BORDER_COLOR = color_constants.BLACK
 
+# Visualizing path
+OPEN_NODES_COLOR = color_constants.LIGHT_GREEN
+CLOSED_NODES_COLOR = color_constants.LIGHT_BLUE
+PATH_NODES_COLOR = color_constants.YELLOW
+
 START_POINT_COLOR = color_constants.GREEN
 END_POINT_COLOR = color_constants.RED
