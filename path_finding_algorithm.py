@@ -8,7 +8,7 @@ import pygame
 
 from node_board_object import NodeBoard
 from node_object import Node
-from config_constants import OPEN_NODES_COLOR, CLOSED_NODES_COLOR
+from config_constants import OPEN_NODES_COLOR, CLOSED_NODES_COLOR, SHOW_STEPS_DELAY
 from color_constants import Color
 
 # all possible moves from one square to another
@@ -17,24 +17,24 @@ MOVES = [
     (1, 0),  # right
     (0, 1),  # down
     (-1, 0),  # left
-    (1, -1),  # up right
-    (1, 1),  # down right
-    (-1, 1),  # down left
-    (-1, -1)  # up left
+    # (1, -1),  # up right
+    # (1, 1),  # down right
+    # (-1, 1),  # down left
+    # (-1, -1)  # up left
 ]
-
-# The delay needs to be bigger than the time of the path-finding algorithm
-SHOW_STEPS_DELAY = 0.008
 
 Board = List[List[Node]]
 Heuristic_Function = Callable[[Node, Node], int]
-Path_List = List[Node]
-Draw_Deque = Deque[Tuple[Color, Node]]
-Search_Function = Callable[[NodeBoard, Path_List, Optional[Draw_Deque], Heuristic_Function], None]
+PathList = List[Node]
+DrawDeque = Deque[Tuple[Color, Node]]
+SearchFunction = Callable[[NodeBoard, PathList, Optional[DrawDeque], Heuristic_Function], None]
+
 
 def manhattan_distance(node_a: Node, node_b: Node) -> int:
     return abs(node_a.x - node_b.x) + abs(node_a.y - node_b.y)
 
+def euclidian_distance(node_a: Node, node_b: Node) -> int:
+    return int((node_a.x - node_b.x)**2 + (node_a.y - node_b.y)**2)
 
 # # A thread function for drawing nodes
 # def draw_steps(deque: Deque[Node], flag: List[bool]) -> None:
@@ -57,8 +57,8 @@ def manhattan_distance(node_a: Node, node_b: Node) -> int:
 # Return path list
 def search_a_star(
         board: NodeBoard,
-        out_path_list: Path_List,
-        draw_queue: Optional[Draw_Deque],
+        out_path_list: PathList,
+        draw_queue: Optional[DrawDeque],
         heuristic: Heuristic_Function) -> None:
 
     # Init priority queue
@@ -66,14 +66,14 @@ def search_a_star(
     heap: List[Tuple[int, int, int]] = [(0, board.start_node.y, board.start_node.x)]
     board.start_node.visited = True
 
-    rows, cols = len(board.get_board()), len(board.get_board()[0])
+    rows, cols = board.rows, board.cols
 
     while heap:
 
         tup: Tuple[int, int, int] = heappop(heap)
         _, node_y, node_x = tup
 
-        node = board.get_board()[node_y][node_x]
+        node = board.get_node(node_y, node_x)
         
         # Best node so far
         if draw_queue is not None:
@@ -94,7 +94,7 @@ def search_a_star(
                     or y < 0 or y >= rows:
                 continue
 
-            child_node = board.get_board()[y][x]
+            child_node = board.get_node(y, x)
 
             # Wall or was visited before
             if child_node.is_wall() or child_node.visited:
@@ -117,17 +117,17 @@ def search_a_star(
 def search_path(
         board: NodeBoard,
         show_steps: bool=False,
-        search_func: Search_Function=search_a_star,
-        heuristic: Heuristic_Function=manhattan_distance) -> List[Node]:
+        search_func: SearchFunction=search_a_star,
+        heuristic: Heuristic_Function=euclidian_distance) -> List[Node]:
 
-    path: Path_List = []
+    path: PathList = []
 
     if not show_steps:
         # Threading not needed
         search_func(board, path, None, heuristic)
         return path
 
-    draw_queue: Draw_Deque = deque()
+    draw_queue: DrawDeque = deque()
 
     thread = threading.Thread(
         target=search_func, args=(board, path, draw_queue, heuristic))
