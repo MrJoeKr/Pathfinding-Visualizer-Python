@@ -13,6 +13,7 @@ from pygame_tick_box import TickBox
 from text_panel import TextPanel
 
 BOTTOM_PANEL_HEIGHT = 50
+BOTTOM_PANEL_WIDTH = DISPLAY_WIDTH - 100
 TICK_BOX_WIDTH = 30
 _TICK_BOX_CLICK_DELAY = 0.1
 
@@ -27,17 +28,17 @@ class BoardWindow:
 
         self.board = NodeBoard(display, rows, cols)
 
+        # Text panel
+        self.text_panel = TextPanel(
+            display, 0, DISPLAY_HEIGTH - BOTTOM_PANEL_HEIGHT, BOTTOM_PANEL_WIDTH,
+            BOTTOM_PANEL_HEIGHT, color_constants.BLACK)
+
         # Initialize tick box
         self.tick_box: TickBox = TickBox(
             display,
             DISPLAY_WIDTH - TICK_BOX_WIDTH - DISPLAY_WIDTH / 30,
             DISPLAY_HEIGTH - BOTTOM_PANEL_HEIGHT + 5,
             TICK_BOX_WIDTH)
-
-        # Text panel
-        self.text_panel = TextPanel(
-            display, 0, DISPLAY_HEIGTH - BOTTOM_PANEL_HEIGHT, DISPLAY_WIDTH,
-            BOTTOM_PANEL_HEIGHT, color_constants.BLACK)
 
         # Used for tick box threading to wait between clicks
         self._tick_box_executed: bool = False
@@ -107,8 +108,16 @@ class BoardWindow:
         elif self.board.end_node is None:
             self.text_panel.write_text(0 + text_margin_left, 0, "Choose end point", END_POINT_COLOR)
         
-        elif self.board.end_node is not None:
+        elif self.board.end_node is not None and not self.board.finding_path_finished:
             self.text_panel.write_text(0 + text_margin_left, 0, "Draw walls or press SPACE to start", color_constants.WHITE)
+
+        elif self.board.finding_path_finished and self.board.solution_found():
+            self.text_panel.write_text(0 + text_margin_left, 0, f"Solution found! Path is {len(self.board.get_board())} nodes long", START_POINT_COLOR)
+
+        elif self.board.finding_path_finished and not self.board.solution_found():
+            self.text_panel.write_text(0 + text_margin_left, 0, "No path was found", END_POINT_COLOR)
+
+
 
     def show_steps(self) -> bool:
         return self.tick_box.is_ticked()
@@ -139,7 +148,7 @@ class BoardWindow:
 
             if event.type == pygame.KEYDOWN:
                 # Reset board
-                if event.key == pygame.K_BACKSPACE:
+                if event.key == pygame.K_BACKSPACE or event.key == pygame.K_r:
                     self.reset_board_window()
 
                 # Start the algorithm
@@ -148,11 +157,10 @@ class BoardWindow:
                     show_steps = self.tick_box.is_ticked()
 
                     # print("Starting algorithm")
-                    path = search_path(
-                        self.board, show_steps=show_steps)
+                    search_path(self.board, show_steps=show_steps)
                     # print("Done")
 
-                    self.board.draw_path(path)
+                    self.board.draw_path()
 
     def reset_board_window(self) -> None:
         self.board.reset_board()
@@ -162,7 +170,8 @@ class BoardWindow:
             pygame.display.update()
 
     def _wait_for_next_execution_thread(self) -> None:
-        threading.Thread(target=self._help_wait).start()
+        thread = threading.Thread(target=self._help_wait)
+        thread.start()
 
     def _help_wait(self) -> None:
         time.sleep(_TICK_BOX_CLICK_DELAY)
