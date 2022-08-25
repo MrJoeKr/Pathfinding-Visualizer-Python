@@ -146,7 +146,6 @@ class BoardWindow:
                 if self.board.end_node is not None and event.key == pygame.K_SPACE:
 
                     show_steps = self.tick_box.is_ticked()
-                    print(show_steps)
 
                     # print("Starting algorithm")
                     path = search_path(
@@ -157,6 +156,10 @@ class BoardWindow:
 
     def reset_board_window(self) -> None:
         self.board.reset_board()
+
+    def update_window(self) -> None:
+        if pygame.display.get_init():
+            pygame.display.update()
 
     def _wait_for_next_execution_thread(self) -> None:
         threading.Thread(target=self._help_wait).start()
