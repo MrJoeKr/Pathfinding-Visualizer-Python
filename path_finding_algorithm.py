@@ -17,6 +17,8 @@ MOVES = [
     (1, 0),  # right
     (0, 1),  # down
     (-1, 0),  # left
+    # TODO:
+    #   - not working properly with diagonal moves
     # (1, -1),  # up right
     # (1, 1),  # down right
     # (-1, 1),  # down left
@@ -131,9 +133,10 @@ def search_path(
 
     # Draw nodes
     while draw_queue:
-        # print(f"Drawing node")
         color, node = draw_queue.popleft()
 
+        # TODO -> make pop up animation better
+        # node.draw_pop_up_animation(color)
         node.set_color(color)
 
         # Update display
