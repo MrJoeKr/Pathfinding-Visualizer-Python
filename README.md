@@ -1,23 +1,26 @@
 # A-star-search-algorithm-in-python
-A* search algorithm made in Python with the use of module pygame.
+A* search algorithm visualizer made in Python with the use of module [pygame](https://www.pygame.org/).
 
-## Before You Execute .py file
-Two windows pop up: one asks you whether you want to see the steps of the algoritm. If **YES**, **tick the box** and **press the button "Done"**.
+# Setup
+Start **``run.pyw``** file to run the program.
 
-## Controls
-  - Hold **LEFT MOUSE CLICK** for drawing start / end point or walls
-  - **SPACE** to start the path finding
-  - **BACKSPACE** to reset board
-
-## Requirements:
+# Requirements:
   - Python 3.x
   - modules:
-    - pygame
-    - threading
-    - numpy
-    - tkinter
+    - [pygame](https://www.pygame.org/)
+
+# How to visualize algorithm
+Click on the **tick-box** in the bottom-right corner
     
+# Controls
+  - **LEFT MOUSE CLICK** for drawing start / end / wall node
+  - **RIGHT MOUSE CLICK** for deleting start / end / wall node
+  - **SPACE** to start the path finding
+  - **BACKSPACE** or **"R"** to reset board
+  - **ESCAPE** to exit program
+
+
     
-Enjoy.
+### Enjoy.
 
 - MrJoeKr
