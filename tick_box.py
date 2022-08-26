@@ -1,12 +1,11 @@
 import pygame
 import color_constants
 
-# TODO:
-#   - make tickbox in pygame
-#   - tkinter would be removed
 
-FOREGROUND_PADDING = 1
-
+FOREGROUND_PADDING = 2
+BORDER_COLOR = color_constants.LIGHT_BLUE
+BACKGROUND_COLOR = color_constants.WHITE
+CROSS_WIDTH = 3
 
 class TickBox:
 
@@ -33,14 +32,14 @@ class TickBox:
 
         # Background box
         background_rect = pygame.Rect(self.x, self.y, self.width, self.width)
-        pygame.draw.rect(self.display, color_constants.BLACK, background_rect)
+        pygame.draw.rect(self.display, BORDER_COLOR, background_rect)
 
         # Foreground box
         foreground_rect = pygame.Rect(self.x + self.foreground_padding, 
                                       self.y + self.foreground_padding, 
-                                      self.width - self.foreground_padding,
-                                      self.width - self.foreground_padding)
-        pygame.draw.rect(self.display, color_constants.WHITE, foreground_rect)
+                                      self.width - self.foreground_padding * 2,
+                                      self.width - self.foreground_padding * 2)
+        pygame.draw.rect(self.display, BACKGROUND_COLOR, foreground_rect)
 
     # Tick / untick box and return whether it's ticked
     def tick_untick_box(self) -> bool:
@@ -59,7 +58,7 @@ class TickBox:
             end_pos = \
                 (self.x + self.width - self.foreground_padding, self.y + self.width - self.foreground_padding)
 
-            pygame.draw.line(self.display, color_constants.GREEN, start_pos, end_pos)
+            pygame.draw.line(self.display, color_constants.GREEN, start_pos, end_pos, width=CROSS_WIDTH)
 
             start_pos = \
                 (self.x + self.foreground_padding, self.y - self.foreground_padding + self.width)
@@ -67,7 +66,7 @@ class TickBox:
             end_pos = \
                 (self.x + self.width - self.foreground_padding, self.y + self.foreground_padding)
 
-            pygame.draw.line(self.display, color_constants.GREEN, start_pos, end_pos)
+            pygame.draw.line(self.display, color_constants.GREEN, start_pos, end_pos, width=CROSS_WIDTH)
 
 
         return self.ticked
