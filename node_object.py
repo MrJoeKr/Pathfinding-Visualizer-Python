@@ -1,3 +1,4 @@
+import time
 import pygame
 from config_constants import NODE_SIZE, NODE_BORDER_COLOR, NODE_COLOR, FOREGROUND_PADDING, WALL_COLOR
 
@@ -14,18 +15,20 @@ class Node():
         self.display = display
 
         self.parent = parent
+        # x and y are positions in the maze
         self.position = position
-        self.x = self.position[0]
-        self.y = self.position[1]
+        self.x, self.y = self.position
 
         self.width = NODE_SIZE
         self.color = NODE_COLOR
         self.border_color = NODE_BORDER_COLOR
 
-        # Position for displaying node
+        # Position for displaying node in window
         self.draw_position = \
             (position[0] * self.width,
              position[1] * self.width)
+
+        self.draw_x, self.draw_y = self.draw_position
 
         # For A* algorithm
         # f = g + h
@@ -61,8 +64,33 @@ class Node():
             pygame.Rect(
                 x + FOREGROUND_PADDING,
                 y + FOREGROUND_PADDING,
-                self.width - FOREGROUND_PADDING,
-                self.width - FOREGROUND_PADDING))
+                self.width - FOREGROUND_PADDING * 2,
+                self.width - FOREGROUND_PADDING * 2))
+
+    def draw_pop_up_animation(self, color: Color) -> None:
+
+        start_node_size = 0.1
+        pop_up_speed = 0.01
+
+        center = \
+            (self.draw_x + self.width / 2 + FOREGROUND_PADDING, 
+            self.draw_y + self.width / 2 + FOREGROUND_PADDING)
+
+        update_rect = pygame.Rect(self.draw_x, self.draw_y, self.width, self.width)
+        size = start_node_size
+
+        while size < self.width / 2 - FOREGROUND_PADDING:
+
+            pygame.draw.circle(
+                self.display,
+                color,
+                center,
+                size
+            )
+
+            size += pop_up_speed
+            pygame.display.update([update_rect])
+
 
     def set_color(self, color: Color) -> None:
         self.color = color
@@ -81,7 +109,7 @@ class Node():
             self.display,
             color,
             center,
-            self.width / 2,
+            self.width / 2 - FOREGROUND_PADDING,
         )
 
     def set_wall(self) -> None:
