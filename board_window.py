@@ -9,8 +9,8 @@ from color_constants import Color
 from node_board_object import NodeBoard
 from node_object import Node
 from path_finding_algorithm import search_path
-from pygame_tick_box import TickBox
 from text_panel import TextPanel
+from tick_box import TickBox
 
 BOTTOM_PANEL_HEIGHT = 50
 BOTTOM_PANEL_WIDTH = DISPLAY_WIDTH - 100
