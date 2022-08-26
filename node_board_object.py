@@ -52,13 +52,18 @@ class NodeBoard:
         node_color = PATH_NODES_COLOR
 
         for node in self.path:
-            node.set_color(node_color)
 
             if node == self.path[0]:
+                node.set_color(node_color)
                 node.draw_as_circle(START_POINT_COLOR)
 
             elif node == self.path[-1]:
+                node.set_color(node_color)
                 node.draw_as_circle(END_POINT_COLOR)
+
+            else:
+                node.draw_pop_up_animation(node_color)
+                # node.set_color(node_color)
 
             pygame.display.update()
             time.sleep(SHOW_PATH_DELAY)
