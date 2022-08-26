@@ -1,8 +1,8 @@
-from typing import Deque, List, Optional
+from typing import List, Optional
 import pygame
 import threading
 import time
-from collections import deque
+import sys
 
 from config_constants import *
 from color_constants import Color
@@ -141,12 +141,14 @@ class BoardWindow:
 
         for event in pygame.event.get():
             # Quit app
-            if event.type == pygame.QUIT or (
-                    event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                self.running = False
-                pygame.quit()
+            if event.type == pygame.QUIT:
+                self.quit_app()
 
             if event.type == pygame.KEYDOWN:
+
+                if event.key == pygame.K_ESCAPE:
+                    self.quit_app()
+
                 # Reset board
                 if event.key == pygame.K_BACKSPACE or event.key == pygame.K_r:
                     self.reset_board_window()
@@ -161,6 +163,11 @@ class BoardWindow:
                     # print("Done")
 
                     self.board.draw_path()
+
+    def quit_app(self) -> None:
+        self.running = False
+        pygame.quit()
+        sys.exit()
 
     def reset_board_window(self) -> None:
         self.board.reset_board()
