@@ -15,7 +15,7 @@ SHOW_PATH_DELAY = 0.01
 
 # Node properties
 NODE_SIZE = 15
-FOREGROUND_PADDING = 1
+FOREGROUND_PADDING = 0.5
 WALL_COLOR = color_constants.BLACK
 NODE_COLOR = color_constants.WHITE
 NODE_BORDER_COLOR = color_constants.GRAY
