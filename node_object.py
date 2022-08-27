@@ -102,8 +102,8 @@ class Node():
         self.color = color
         
         center = \
-            (x + self.width / 2 + FOREGROUND_PADDING, 
-            y + self.width / 2 + FOREGROUND_PADDING)
+            (x + self.width / 2, 
+            y + self.width / 2)
 
         pygame.draw.circle(
             self.display,
