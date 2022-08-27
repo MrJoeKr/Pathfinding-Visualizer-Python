@@ -112,7 +112,9 @@ class BoardWindow:
             self.text_panel.write_text(0 + text_margin_left, 0, "Draw walls or press SPACE to start", color_constants.WHITE)
 
         elif self.board.finding_path_finished and self.board.solution_found():
-            self.text_panel.write_text(0 + text_margin_left, 0, f"Solution found! Path is {len(self.board.get_board())} nodes long", START_POINT_COLOR)
+            length = len(self.board.path) - 1
+            plural = "s" if length > 1 else ""
+            self.text_panel.write_text(0 + text_margin_left, 0, f"Solution found! Path is {length} node{plural} long", START_POINT_COLOR)
 
         elif self.board.finding_path_finished and not self.board.solution_found():
             self.text_panel.write_text(0 + text_margin_left, 0, "No path was found", END_POINT_COLOR)
