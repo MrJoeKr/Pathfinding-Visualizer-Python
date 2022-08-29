@@ -43,6 +43,11 @@ class Node():
         # check equality with another node
         return self.position == other.position
 
+    def clear_flags(self) -> None:
+        self.g = 0
+        self.parent = None
+        self.visited = False
+
     def get_rect(self) -> pygame.Rect:
         return self._update_rect
 
@@ -84,7 +89,7 @@ class Node():
     def draw_pop_up_animation(self, color: Color) -> None:
 
         start_node_size = 0.1
-        pop_up_speed = 0.01
+        pop_up_speed = 0.5
 
         center = \
             (self.draw_x + self.width / 2 + FOREGROUND_PADDING, 

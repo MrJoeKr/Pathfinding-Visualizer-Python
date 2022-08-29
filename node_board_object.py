@@ -48,11 +48,23 @@ class NodeBoard:
     def reset_board(self):
         self.start_node = None
         self.end_node = None
-        self.path.clear()
-        self.finding_path_finished = False
         self.board = self._init_board()
 
+        self.clear_path()
+
         self.draw_board()
+
+    # Resets node flags and removes found path
+    def clear_path(self) -> None:
+        self.path.clear()
+        self.finding_path_finished = False
+
+        for row in self.board:
+            for node in row:
+                node.clear_flags()
+
+                if node is not self.start_node and node is not self.end_node:
+                    node.draw_node()
 
     def get_board(self):
         return self.board
