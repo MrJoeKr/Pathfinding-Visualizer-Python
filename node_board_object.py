@@ -9,7 +9,7 @@ PathList = List[Node]
 
 class NodeBoard:
 
-    def __init__(self, display: pygame.display, rows: int, cols: int) -> None:
+    def __init__(self, display: pygame.Surface, rows: int, cols: int) -> None:
         self.rows = rows
         self.cols = cols
         self.display = display

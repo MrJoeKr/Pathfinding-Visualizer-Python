@@ -11,7 +11,7 @@ class TickBox:
 
     # A squared tick box
     def __init__(
-            self, display: pygame.display, x: int, y: int, width: int) -> None:
+            self, display: pygame.Surface, x: int, y: int, width: int) -> None:
         self.display = display
 
         self.x = x

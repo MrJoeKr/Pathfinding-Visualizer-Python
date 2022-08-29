@@ -9,7 +9,7 @@ Color = tuple[int, int, int]
 class Node():
     # Class for nodes -> squares on the board
     def __init__(
-            self, display: pygame.display, parent: "Node" = None,
+            self, display: pygame.Surface, parent: "Node" = None,
             position: tuple[int, int] = None):
 
         self.display = display

@@ -3,7 +3,7 @@ from color_constants import Color
 
 class TextPanel:
 
-    def __init__(self, display: pygame.display, x: int, y: int, width: int, height: int, background_color: Color) -> None:
+    def __init__(self, display: pygame.Surface, x: int, y: int, width: int, height: int, background_color: Color) -> None:
         self.x = x
         self.y = y
         self.width = width

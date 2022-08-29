@@ -24,7 +24,7 @@ _TICK_BOX_CLICK_DELAY = 0.1
 class BoardWindow:
 
     def __init__(
-            self, display: pygame.display, rows: int, cols: int):
+            self, display: pygame.Surface, rows: int, cols: int):
 
         display.fill(color_constants.BLACK)
 
