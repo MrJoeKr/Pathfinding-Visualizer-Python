@@ -14,7 +14,7 @@ class NodeBoard:
         self.cols = cols
         self.display = display
 
-        self.board: List[List[Node]] = self._init_draw_board()
+        self.board: List[List[Node]] = self._init_board()
 
         self.start_node: Optional[Node] = None
         self.end_node: Optional[Node] = None
@@ -22,7 +22,7 @@ class NodeBoard:
         self.path: PathList = []
         self.finding_path_finished = False
 
-    def _init_draw_board(self) -> List[List[Node]]:
+    def _init_board(self) -> List[List[Node]]:
         out = []
         for y in range(self.rows):
             sub = []
@@ -30,16 +30,29 @@ class NodeBoard:
             for x in range(self.cols):
                 node = Node(self.display, parent=None, position=(x, y))
                 sub.append(node)
-                node.draw_node()
         
         return out
+
+    def draw_board(self) -> None:
+        for row in self.board:
+            for node in row:
+                
+                node.draw_node(NODE_COLOR)
+
+                if node is self.start_node:
+                    node.draw_as_circle(START_POINT_COLOR)
+
+                elif node is self.end_node:
+                    node.draw_as_circle(END_POINT_COLOR)
 
     def reset_board(self):
         self.start_node = None
         self.end_node = None
         self.path.clear()
         self.finding_path_finished = False
-        self.board = self._init_draw_board()
+        self.board = self._init_board()
+
+        self.draw_board()
 
     def get_board(self):
         return self.board
@@ -54,11 +67,9 @@ class NodeBoard:
         for node in self.path:
 
             if node == self.path[0]:
-                node.change_node_color(node_color)
                 node.draw_as_circle(START_POINT_COLOR)
 
             elif node == self.path[-1]:
-                node.change_node_color(node_color)
                 node.draw_as_circle(END_POINT_COLOR)
 
             else:

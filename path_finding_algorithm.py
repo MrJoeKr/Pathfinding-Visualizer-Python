@@ -102,28 +102,28 @@ def search_path(
         # Threading not needed
         search_func(board, None, heuristic)
 
-    draw_queue: DrawDeque = deque()
+    else:
+        draw_queue: DrawDeque = deque()
 
-    thread = threading.Thread(
-        target=search_func, args=(board, draw_queue, heuristic))
-    thread.start()
+        thread = threading.Thread(
+            target=search_func, args=(board, draw_queue, heuristic))
+        thread.start()
 
-    # Draw nodes
-    while draw_queue:
-        color, node = draw_queue.popleft()
+        # Draw nodes
+        while draw_queue:
+            color, node = draw_queue.popleft()
 
-        # TODO -> make pop up animation better
-        # node.draw_pop_up_animation(color)
-        node.change_node_color(color)
+            # print(f"Color : {color}")
 
-        # Update display
-        pygame.display.update()
+            # TODO -> make pop up animation better
+            # node.draw_pop_up_animation(color)
+            node.draw_node(color)
 
-        # Speed of drawing
-        time.sleep(SHOW_STEPS_DELAY)
+            # Speed of drawing
+            time.sleep(SHOW_STEPS_DELAY)
 
     board.finding_path_finished = True
-    
+
 
 def get_path_list(out_path_list: List[Node], end_node: Node) -> None:
 

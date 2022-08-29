@@ -31,7 +31,7 @@ class BoardWindow:
             search_func: path_finding_algorithm.SearchFunction=path_finding_algorithm.search_a_star, 
             heuristic_func:path_finding_algorithm.HeuristicFunction=path_finding_algorithm.euclidian_distance):
 
-        display.fill(color_constants.BLACK)
+        self.display = display
 
         self.board = NodeBoard(display, rows, cols)
 
@@ -55,8 +55,20 @@ class BoardWindow:
 
         self.running = True
 
+        self.draw_window()
+
+    def draw_window(self) -> None:
+        self.display.fill(color_constants.BLACK)
+
+        self.board.draw_board()
+
+        self.text_panel.draw_display()
+
+        self.tick_box.draw_tick_box()
+
         self._update_text()
         pygame.display.update()
+
 
     def get_node_board(self) -> NodeBoard:
         return self.board
@@ -141,11 +153,6 @@ class BoardWindow:
         elif self.board.finding_path_finished and not self.board.solution_found():
             self.text_panel.write_text(0 + text_margin_left, 0, "No path was found", END_POINT_COLOR)
 
-
-
-    def show_steps(self) -> bool:
-        return self.tick_box.is_ticked()
-
     def _get_node_from_mouse_coords(self, mx: int, my: int) -> Optional[Node]:
 
         rows, cols = self.board.rows, self.board.cols
@@ -160,7 +167,8 @@ class BoardWindow:
         return node
 
     # Process keys
-    def process_key_events(self) -> None:
+    # Returns true if user wants to go back to main menu
+    def process_key_events(self) -> bool:
 
         for event in pygame.event.get():
             # Quit app
@@ -169,11 +177,12 @@ class BoardWindow:
 
             if event.type == pygame.KEYDOWN:
 
-                if event.key == pygame.K_ESCAPE:
-                    self.quit_app()
+                # Back to main menu
+                if event.key == pygame.K_BACKSPACE or event.key == pygame.K_ESCAPE:
+                    return True
 
                 # Reset board
-                if event.key == pygame.K_BACKSPACE or event.key == pygame.K_r:
+                if event.key == pygame.K_r:
                     self.reset_board_window()
 
                 # Start the algorithm (only once in this version - dynamically updated later)
@@ -189,6 +198,8 @@ class BoardWindow:
 
                     self.board.draw_path()
 
+        return False
+
     def quit_app(self) -> None:
         self.running = False
         pygame.quit()
@@ -196,6 +207,7 @@ class BoardWindow:
 
     def reset_board_window(self) -> None:
         self.board.reset_board()
+        self._update_text()
 
     def update_window(self) -> None:
         if pygame.display.get_init():

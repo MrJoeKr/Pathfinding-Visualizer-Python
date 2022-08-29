@@ -1,4 +1,5 @@
 import time
+from typing import Optional
 import pygame
 from config_constants import NODE_SIZE, NODE_BORDER_COLOR, NODE_COLOR, FOREGROUND_PADDING, WALL_COLOR
 
@@ -20,7 +21,7 @@ class Node():
         self.x, self.y = self.position
 
         self.width = NODE_SIZE
-        self.color = NODE_COLOR
+        self.default_color = NODE_COLOR
         self.border_color = NODE_BORDER_COLOR
 
         # Position for displaying node in window
@@ -42,11 +43,18 @@ class Node():
         # check equality with another node
         return self.position == other.position
 
+    def get_rect(self) -> pygame.Rect:
+        return self._update_rect
+
     def display_update(self):
         pygame.display.update([self._update_rect])
 
-    def draw_node(self) -> None:
+    def draw_node(self, color: Optional[Color]=None) -> None:
         draw_x, draw_y = self.draw_position
+
+        if color is None:
+            # Use default color
+            color = self.default_color
 
         if self.is_wall():
             pygame.draw.rect(
@@ -64,7 +72,7 @@ class Node():
 
         # Foreground square
         pygame.draw.rect(
-            self.display, self.color,
+            self.display, color,
             pygame.Rect(
                 draw_x + FOREGROUND_PADDING,
                 draw_y + FOREGROUND_PADDING,
@@ -97,16 +105,9 @@ class Node():
             size += pop_up_speed
             pygame.display.update([update_rect])
 
-
-    def change_node_color(self, color: Color) -> None:
-        self.color = color
-        self.draw_node()
-
     def draw_as_circle(self, color: Color) -> None:
         x, y = self.draw_position[0], self.draw_position[1]
 
-        self.color = color
-        
         center = \
             (x + self.width / 2, 
             y + self.width / 2)
@@ -129,7 +130,6 @@ class Node():
         self.draw_node()
 
     def clear_node(self) -> None:
-        self.color = NODE_COLOR
         self.draw_node()
 
     def is_wall(self):

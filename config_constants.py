@@ -23,7 +23,7 @@ MOVES = [
 
 # The delay needs to be bigger than the time of the path-finding algorithm
 SHOW_STEPS_DELAY = 0.001
-SHOW_PATH_DELAY = 0.01
+SHOW_PATH_DELAY = 0.005
 
 # Node properties
 NODE_SIZE = 15

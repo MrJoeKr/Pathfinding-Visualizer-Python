@@ -18,8 +18,6 @@ class TextPanel:
         # Default font
         self.font: pygame.font.Font = pygame.font.SysFont('Arial', 40)
 
-        self.draw_display()
-
     def update_display(self) -> None:
         pygame.display.update(self._update_rect)
 

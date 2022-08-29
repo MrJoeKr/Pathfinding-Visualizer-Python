@@ -24,8 +24,6 @@ class TickBox:
 
         self._update_rect = pygame.Rect(x, y, width, width)
 
-        self.draw_tick_box()
-
     def is_mouse_collision(self, mx: int, my: int) -> bool:
         return self.x <= mx <= self.x + self.width and self.y <= my <= self.y + self.width
 
