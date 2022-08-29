@@ -34,8 +34,10 @@ NODE_BORDER_COLOR = color_constants.GRAY
 
 # Visualizing path
 OPEN_NODES_COLOR = color_constants.LIGHT_BLUE
-CLOSED_NODES_COLOR = color_constants.LIGHT_GREEN
+# CLOSED_NODES_COLOR = color_constants.LIGHT_GREEN
+CLOSED_NODES_COLOR = ( 64, 117, 21 )
 PATH_NODES_COLOR = color_constants.GOLDEN
 
 START_POINT_COLOR = color_constants.GREEN
+# START_POINT_COLOR = (24, 38, 249)
 END_POINT_COLOR = color_constants.RED
