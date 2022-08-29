@@ -9,6 +9,7 @@ import pygame
 from node_board_object import NodeBoard
 from node_object import Node
 from config_constants import OPEN_NODES_COLOR, CLOSED_NODES_COLOR, SHOW_STEPS_DELAY, MOVES
+from config_constants import START_POINT_COLOR, END_POINT_COLOR
 from color_constants import Color
 
 Board = List[List[Node]]
@@ -158,7 +159,14 @@ def search_path(
 
             # TODO -> make pop up animation better
             # node.draw_pop_up_animation(color)
+
             node.draw_node(color)
+
+            if node is board.start_node:
+                node.draw_as_circle(START_POINT_COLOR)
+
+            if node is board.end_node:
+                node.draw_as_circle(END_POINT_COLOR)
 
             # Speed of drawing
             time.sleep(SHOW_STEPS_DELAY)
