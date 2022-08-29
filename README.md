@@ -1,8 +1,10 @@
-# A-star-search-algorithm-in-python
-A* search algorithm visualizer made in Python with the use of module [pygame](https://www.pygame.org/).
+# Path-visualizer-in-python
+Application which visualizes various pathfinding algorithms. Made in Python with the use of module [pygame](https://www.pygame.org/).
 
 # Setup
-Start **``run.pyw``** file to run the program.
+    - Start **``run.pyw``** file to run the program.
+    - In the main menu, choose algorithm and heuristic (if heurestic is used)
+    - Click **``Start Drawing``** to start experimenting
 
 # Requirements:
   - Python 3.x
@@ -10,7 +12,7 @@ Start **``run.pyw``** file to run the program.
     - [pygame](https://www.pygame.org/)
 
 # How to visualize algorithm
-Click on the **tick-box** in the bottom-right corner
+Click on the **tick-box** in the bottom-right corner to have algorithm visualized.
     
 # Controls
   - **LEFT MOUSE CLICK** for drawing start / end / wall node
