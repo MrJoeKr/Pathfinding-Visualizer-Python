@@ -25,6 +25,7 @@ def manhattan_distance(node_a: Node, node_b: Node) -> int:
 def euclidian_distance(node_a: Node, node_b: Node) -> int:
     return int((node_a.x - node_b.x)**2 + (node_a.y - node_b.y)**2)
 
+# TODO: INCORRECT IMPLEMENTATION
 # Find path from start to end node using A* star
 def search_a_star(
         board: NodeBoard,
