@@ -38,25 +38,7 @@ def manhattan_distance(node_a: Node, node_b: Node) -> int:
 def euclidian_distance(node_a: Node, node_b: Node) -> int:
     return int((node_a.x - node_b.x)**2 + (node_a.y - node_b.y)**2)
 
-# # A thread function for drawing nodes
-# def draw_steps(deque: Deque[Node], flag: List[bool]) -> None:
-
-#     while True:
-#         print("running")
-#         while deque:
-#             node = deque.popleft()
-
-#             print(node.x, node.y)
-
-#             node.draw_display()
-
-#         if flag:
-#             print(flag)
-#             break
-
-
 # Find path from start to end node using A* star
-# Return path list
 def search_a_star(
         board: NodeBoard,
         draw_queue: Optional[DrawDeque],
@@ -79,7 +61,7 @@ def search_a_star(
         # Best node so far
         if draw_queue is not None:
             # print("Appending node")
-            draw_queue.append((OPEN_NODES_COLOR, node))
+            draw_queue.append((CLOSED_NODES_COLOR, node))
 
         if node == board.end_node:
             get_path_list(board.path, node)
@@ -105,11 +87,12 @@ def search_a_star(
             child_node.parent = node
             child_node.visited = True
             child_node.g = node.g + 1
-            f = child_node.g + heuristic(node, board.end_node)
-            heappush(heap, (f, child_node.y, child_node.x))
+            f = child_node.g + heuristic(child_node, board.end_node)
+
+            heappush(heap, (f, y, x))
 
             if draw_queue:
-                draw_queue.append((CLOSED_NODES_COLOR, child_node))
+                draw_queue.append((OPEN_NODES_COLOR, child_node))
 
     # No path found
     return
