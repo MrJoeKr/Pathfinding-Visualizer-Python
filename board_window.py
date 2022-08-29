@@ -35,7 +35,7 @@ class BoardWindow:
 
         self.board = NodeBoard(display, rows, cols)
 
-        self.algorithm = search_func
+        self.path_algorithm = search_func
         self.heuristic = heuristic_func
 
         # Text panel
@@ -55,8 +55,6 @@ class BoardWindow:
 
         self.running = True
 
-        self.draw_window()
-
     def draw_window(self) -> None:
         self.display.fill(color_constants.BLACK)
 
@@ -68,6 +66,14 @@ class BoardWindow:
 
         self._update_text()
         pygame.display.update()
+
+    def update_pathfinding_funcs(
+        self,
+        search: path_finding_algorithm.SearchFunction,
+        heuristic: path_finding_algorithm.HeuristicFunction) -> None:
+
+        self.path_algorithm = search
+        self.heuristic = heuristic
 
 
     def get_node_board(self) -> NodeBoard:
@@ -191,7 +197,7 @@ class BoardWindow:
                     show_steps = self.tick_box.is_ticked()
 
                     # print("Starting algorithm")
-                    search_path(self.board, show_steps=show_steps, search_func=self.algorithm, heuristic=self.heuristic)
+                    search_path(self.board, show_steps=show_steps, search_func=self.path_algorithm, heuristic=self.heuristic)
                     # print("Done")
 
                     self._update_text()

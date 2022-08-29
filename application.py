@@ -20,6 +20,13 @@ class Application:
     def __init__(self):
         self.display = DISPLAY
 
+        # Initialize menu window object
+        self._menu_window = MenuWindow(self.display)
+        # Initialize board window object
+        self._board_window = BoardWindow(DISPLAY, ROWS, COLS)
+
+        self.algorithm: pfa.SearchFunction = pfa.search_a_star
+        self.heuristic: pfa.HeuristicFunction = pfa.euclidian_distance
 
     def run_app(self):
 
@@ -29,33 +36,36 @@ class Application:
 
     def _run_menu_window(self):
 
-        menu = MenuWindow(self.display)
+        self._menu_window.draw_window()
+        self._menu_window.running = True
 
-        while menu.running:
+        while self._menu_window.running:
             
-            menu.process_mouse_events()
-            menu.process_key_events()
+            self._menu_window.process_mouse_events()
+            self._menu_window.process_key_events()
 
             MAINCLOCK.tick(FPS)
 
         # Initialize functions for pathfinding
-        self.algorithm: pfa.SearchFunction = menu.get_algorithm()
-        self.heuristic: pfa.HeuristicFunction = menu.get_heuristic()
+        self.algorithm = self._menu_window.get_algorithm()
+        self.heuristic = self._menu_window.get_heuristic()
+
+        self._board_window.update_pathfinding_funcs(self.algorithm, self.heuristic)
 
     def _run_board_window(self) -> None:
 
-        # Initialize board window object
-        board_window = BoardWindow(DISPLAY, ROWS, COLS, search_func=self.algorithm, heuristic_func=self.heuristic)
+        self._board_window.draw_window()
+        self._board_window.running = True
 
-        while board_window.running:
+        while self._board_window.running:
 
-            board_window.process_mouse_events()
+            self._board_window.process_mouse_events()
 
-            back_to_menu = board_window.process_key_events()
+            back_to_menu = self._board_window.process_key_events()
 
             if back_to_menu:
                 self._run_menu_window()
-                board_window.draw_window()
+                self._board_window.draw_window()
 
             MAINCLOCK.tick(FPS)
 

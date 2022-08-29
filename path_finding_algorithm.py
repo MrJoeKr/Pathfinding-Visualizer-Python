@@ -142,6 +142,16 @@ _PATH_ALGORITHMS: List[Tuple[str, SearchFunction]] = \
         ("DFS", search_dfs)
     ]
 
+_HEURISTICS: List[Tuple[str, HeuristicFunction]] = \
+    [
+        ("Euclidian Distance", euclidian_distance),
+        ("Manhattan Distance", manhattan_distance)
+    ]
+
 
 def get_algorithms_list() -> List[Tuple[str, SearchFunction]]:
     return _PATH_ALGORITHMS
+
+
+def get_heuristics_list() -> List[Tuple[str, HeuristicFunction]]:
+    return _HEURISTICS

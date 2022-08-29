@@ -34,16 +34,73 @@ class MenuWindow:
         # Delay between clicks
         self._left_click_executed = False
 
+        self.algo_idx = 0
+        self.heuristic_idx = 0
+
+    def draw_window(self) -> None:
         self.display.fill(color_constants.WHITE)
 
-        self._draw_menu()
+        self._draw_title_text()
 
         self._init_algo_button()
+
+        # Init algorithm selection variables
+        self._update_algorithm_selection(self.algo_idx)
+
+        self._init_heuristic_button()
+
+        # Init heuristic selection variables
+        self._update_heuristic_selection(self.heuristic_idx)
 
         self._init_start_button()
 
         pygame.display.update()
 
+    def _draw_heuristic_title_text(self) -> None:
+        font = pygame.font.Font(None, 40)
+        text = font.render("Choose your heuristic", True, color_constants.BLACK)
+
+        algo_rect = text.get_rect(center=(DISPLAY_WIDTH / 2, HEURISTIC_TEXT_HEIGHT))
+
+        self.display.blit(text, algo_rect)
+
+    def _update_heuristic_selection(self, idx: int=0) -> None:
+        idx %= len(self.algorithms)
+
+        self.heuristic_idx = idx
+        self.selected_heuristic_text, self.selected_heuristic_func = self.heuristics[self.heuristic_idx]
+
+        self._draw_heuristic_button_text()
+
+    def _draw_heuristic_button_text(self) -> None:
+        
+        font = pygame.font.Font(None, 40)
+        heuristic_text = font.render(self.selected_heuristic_text, True, color_constants.WHITE)
+
+        # Clear text
+        pygame.draw.rect(self.display, color_constants.BLACK, self.heuristic_button)
+
+        self._draw_text_to_middle_of_rect(heuristic_text, self.heuristic_button)
+
+        pygame.display.update(self.heuristic_button)
+
+    def _init_heuristic_button(self) -> None:
+
+        self._draw_heuristic_title_text()
+
+        self.heuristic_button = pygame.Rect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT)
+        self.heuristic_button.center = (CENTER_WIDTH, HEURISTIC_BUTTON_HEIGHT)
+
+        self.heuristics = path_finding_algorithm.get_heuristics_list()
+
+        arrow_padding = 20
+        arrow_width = 40
+
+        self.left_heuristic_arrow = pygame.Rect(self.heuristic_button.x - arrow_padding - arrow_width, self.heuristic_button.y, arrow_width, self.heuristic_button.height)
+        self.right_heuristic_arrow = pygame.Rect(self.heuristic_button.x + self.heuristic_button.width + arrow_padding, self.heuristic_button.y, arrow_width, self.heuristic_button.height)
+
+        pygame.draw.rect(self.display, color_constants.BLACK, self.left_heuristic_arrow)
+        pygame.draw.rect(self.display, color_constants.BLACK, self.right_heuristic_arrow)
 
     # Algo text
     def _draw_algo_title_text(self) -> None:
@@ -62,8 +119,6 @@ class MenuWindow:
         self.algo_button.center = (CENTER_WIDTH, ALGO_BUTTON_HEIGHT)
 
         self.algorithms = path_finding_algorithm.get_algorithms_list()
-        # Init algorithm variables
-        self._update_algorithm(0)
 
         arrow_padding = 20
         arrow_width = 40
@@ -73,15 +128,6 @@ class MenuWindow:
 
         pygame.draw.rect(self.display, color_constants.BLACK, self.left_algo_arrow)
         pygame.draw.rect(self.display, color_constants.BLACK, self.right_algo_arrow)
-
-    def _draw_menu(self) -> None:
-
-        self._draw_title_text()
-
-        self._draw_select_buttons()
-
-        self._init_start_button()
-
 
     def _init_start_button(self) -> None:
 
@@ -119,9 +165,7 @@ class MenuWindow:
         return self.selected_algo_func
 
     def get_heuristic(self) -> path_finding_algorithm.HeuristicFunction:
-        # TODO
-        return path_finding_algorithm.euclidian_distance
-        pass
+        return self.selected_heuristic_func
 
     def process_mouse_events(self) -> None:
         
@@ -144,7 +188,7 @@ class MenuWindow:
             self.running = False
             time.sleep(0.1)
 
-    def _update_algorithm(self, idx: int) -> None:
+    def _update_algorithm_selection(self, idx: int=0) -> None:
 
         idx %= len(self.algorithms)
 
@@ -170,12 +214,16 @@ class MenuWindow:
     def _process_left_right_arrow_buttons(self, mx: int, my: int) -> None:
 
         if self.left_algo_arrow.collidepoint(mx, my):
-
-            self._update_algorithm(self.algo_idx - 1)
+            self._update_algorithm_selection(self.algo_idx - 1)
         
         if self.right_algo_arrow.collidepoint(mx, my):
+            self._update_algorithm_selection(self.algo_idx + 1)
 
-            self._update_algorithm(self.algo_idx + 1)
+        if self.left_heuristic_arrow.collidepoint(mx, my):
+            self._update_heuristic_selection(self.heuristic_idx - 1)
+
+        if self.right_heuristic_arrow.collidepoint(mx, my):
+            self._update_heuristic_selection(self.heuristic_idx + 1)
 
     # Process keys
     def process_key_events(self) -> None:
