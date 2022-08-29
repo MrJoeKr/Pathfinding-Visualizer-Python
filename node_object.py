@@ -30,11 +30,10 @@ class Node():
 
         self.draw_x, self.draw_y = self.draw_position
 
+        self._update_rect = pygame.Rect(self.draw_x, self.draw_y, self.width, self.width)
+
         # For A* algorithm
-        # f = g + h
         self.g = 0
-        # self.h = 0
-        # self.f = 0
 
         self._is_wall = False
         self.visited = False
@@ -43,29 +42,36 @@ class Node():
         # check equality with another node
         return self.position == other.position
 
-    def draw_display(self) -> None:
-        x, y = self.draw_position[0], self.draw_position[1]
+    def display_update(self):
+        pygame.display.update([self._update_rect])
+
+    def draw_node(self) -> None:
+        draw_x, draw_y = self.draw_position
 
         if self.is_wall():
             pygame.draw.rect(
                 self.display, WALL_COLOR,
-                pygame.Rect(x, y, self.width, self.width))
+                pygame.Rect(draw_x, draw_y, self.width, self.width))
+
+            self.display_update()
 
             return
 
         # Background square
         pygame.draw.rect(
             self.display, self.border_color,
-            pygame.Rect(x, y, self.width, self.width))
+            pygame.Rect(draw_x, draw_y, self.width, self.width))
 
         # Foreground square
         pygame.draw.rect(
             self.display, self.color,
             pygame.Rect(
-                x + FOREGROUND_PADDING,
-                y + FOREGROUND_PADDING,
+                draw_x + FOREGROUND_PADDING,
+                draw_y + FOREGROUND_PADDING,
                 self.width - FOREGROUND_PADDING * 2,
                 self.width - FOREGROUND_PADDING * 2))
+
+        self.display_update()
 
     def draw_pop_up_animation(self, color: Color) -> None:
 
@@ -92,9 +98,9 @@ class Node():
             pygame.display.update([update_rect])
 
 
-    def set_color(self, color: Color) -> None:
+    def change_node_color(self, color: Color) -> None:
         self.color = color
-        self.draw_display()
+        self.draw_node()
 
     def draw_as_circle(self, color: Color) -> None:
         x, y = self.draw_position[0], self.draw_position[1]
@@ -112,17 +118,19 @@ class Node():
             self.width / 2 - FOREGROUND_PADDING,
         )
 
+        self.display_update()
+
     def set_wall(self) -> None:
         self._is_wall = True
-        self.draw_display()
+        self.draw_node()
 
     def unset_wall(self) -> None:
         self._is_wall = False
-        self.draw_display()
+        self.draw_node()
 
     def clear_node(self) -> None:
         self.color = NODE_COLOR
-        self.draw_display()
+        self.draw_node()
 
     def is_wall(self):
         return self._is_wall

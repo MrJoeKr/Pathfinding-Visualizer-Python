@@ -14,20 +14,16 @@ pygame.display.set_caption('A* path finder')
 mainClock = pygame.time.Clock()
 
 def run_app():
-    DISPLAY.fill(BLACK)
 
     # Initialize board window object
     app_window = BoardWindow(DISPLAY, ROWS, COLS)
 
     while app_window.running:
 
-        app_window.draw_text()
-
         app_window.process_mouse_events()
 
         app_window.process_key_events()
 
-        app_window.update_window()
         mainClock.tick(FPS)
 
 

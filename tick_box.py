@@ -22,13 +22,18 @@ class TickBox:
 
         self.foreground_padding = FOREGROUND_PADDING
 
-        self.draw_display()
+        self._update_rect = pygame.Rect(x, y, width, width)
+
+        self.draw_tick_box()
 
     def is_mouse_collision(self, mx: int, my: int) -> bool:
         return self.x <= mx <= self.x + self.width and self.y <= my <= self.y + self.width
 
+    def update_display(self) -> None:
+        pygame.display.update(self._update_rect)
+
     # Draw tickbox on the display
-    def draw_display(self) -> None:
+    def draw_tick_box(self) -> None:
 
         # Background box
         background_rect = pygame.Rect(self.x, self.y, self.width, self.width)
@@ -41,6 +46,8 @@ class TickBox:
                                       self.width - self.foreground_padding * 2)
         pygame.draw.rect(self.display, BACKGROUND_COLOR, foreground_rect)
 
+        self.update_display()
+
     # Tick / untick box and return whether it's ticked
     def tick_untick_box(self) -> bool:
 
@@ -48,7 +55,7 @@ class TickBox:
         self.ticked = not self.ticked
 
         if not self.ticked:
-            self.draw_display()
+            self.draw_tick_box()
 
         else:
             # Draw cross
@@ -68,6 +75,7 @@ class TickBox:
 
             pygame.draw.line(self.display, color_constants.GREEN, start_pos, end_pos, width=CROSS_WIDTH)
 
+        self.update_display()
 
         return self.ticked
 

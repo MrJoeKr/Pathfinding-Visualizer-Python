@@ -3,7 +3,7 @@ import color_constants
 DISPLAY_WIDTH = 800
 DISPLAY_HEIGTH = 650
 
-FPS = 60
+FPS = 120
 
 # Nodes count
 ROWS = 40

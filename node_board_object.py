@@ -30,7 +30,7 @@ class NodeBoard:
             for x in range(self.cols):
                 node = Node(self.display, parent=None, position=(x, y))
                 sub.append(node)
-                node.draw_display()
+                node.draw_node()
         
         return out
 
@@ -54,11 +54,11 @@ class NodeBoard:
         for node in self.path:
 
             if node == self.path[0]:
-                node.set_color(node_color)
+                node.change_node_color(node_color)
                 node.draw_as_circle(START_POINT_COLOR)
 
             elif node == self.path[-1]:
-                node.set_color(node_color)
+                node.change_node_color(node_color)
                 node.draw_as_circle(END_POINT_COLOR)
 
             else:

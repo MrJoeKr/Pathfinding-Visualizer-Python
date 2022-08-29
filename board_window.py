@@ -26,6 +26,8 @@ class BoardWindow:
     def __init__(
             self, display: pygame.display, rows: int, cols: int):
 
+        display.fill(color_constants.BLACK)
+
         self.board = NodeBoard(display, rows, cols)
 
         # Text panel
@@ -44,6 +46,9 @@ class BoardWindow:
         self._tick_box_executed: bool = False
 
         self.running = True
+
+        self._update_text()
+        pygame.display.update()
 
     def get_node_board(self) -> NodeBoard:
         return self.board
@@ -65,10 +70,14 @@ class BoardWindow:
                     board.start_node = node
                     node.draw_as_circle(START_POINT_COLOR)
 
+                    self._update_text()
+
                 elif board.end_node is None and node != board.start_node:
 
                     board.end_node = node
                     node.draw_as_circle(END_POINT_COLOR)
+
+                    self._update_text()
 
                 # Draw walls
                 elif board.end_node is not None and node != board.end_node and node != board.start_node and not node.is_wall():
@@ -81,8 +90,12 @@ class BoardWindow:
                 if node is board.start_node:
                     board.start_node = None
 
+                    self._update_text()
+
                 elif node is board.end_node:
                     board.end_node = None
+
+                    self._update_text()
 
                 elif node.is_wall():
                     node.unset_wall()
@@ -97,7 +110,8 @@ class BoardWindow:
             self._tick_box_executed = True
             self._wait_for_next_execution_thread()
 
-    def draw_text(self) -> None:
+    # Update text when some progress happened
+    def _update_text(self) -> None:
         
         self.text_panel.clear_panel()
         text_margin_left = 5
@@ -137,7 +151,6 @@ class BoardWindow:
 
         return node
 
-    # TODO
     # Process keys
     def process_key_events(self) -> None:
 
@@ -163,6 +176,8 @@ class BoardWindow:
                     # print("Starting algorithm")
                     search_path(self.board, show_steps=show_steps)
                     # print("Done")
+
+                    self._update_text()
 
                     self.board.draw_path()
 

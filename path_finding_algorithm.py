@@ -137,7 +137,7 @@ def search_path(
 
         # TODO -> make pop up animation better
         # node.draw_pop_up_animation(color)
-        node.set_color(color)
+        node.change_node_color(color)
 
         # Update display
         pygame.display.update()
