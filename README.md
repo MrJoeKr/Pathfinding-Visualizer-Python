@@ -2,9 +2,9 @@
 Application which visualizes various pathfinding algorithms. Made in Python with the use of module [pygame](https://www.pygame.org/).
 
 # Setup
-    - Start **``run.pyw``** file to run the program.
-    - In the main menu, choose algorithm and heuristic (if heurestic is used)
-    - Click **``Start Drawing``** to start experimenting
+- Start **``run.pyw``** file to run the program.
+- In the main menu, choose algorithm and heuristic (if heurestic is used)
+- Click **``Start Drawing``** to start experimenting
 
 # Requirements:
   - Python 3.x
@@ -18,7 +18,7 @@ Click on the **tick-box** in the bottom-right corner to have algorithm visualize
   - **LEFT MOUSE CLICK** for drawing start / end / wall node
   - **RIGHT MOUSE CLICK** for deleting start / end / wall node
   - **SPACE** to start the path finding
-  - **"R"** to reset board
+  - **"R"** to clear board
   - **BACKSPACE** to go to menu
   - **ESCAPE** to exit program
 
