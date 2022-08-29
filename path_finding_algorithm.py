@@ -8,22 +8,8 @@ import pygame
 
 from node_board_object import NodeBoard
 from node_object import Node
-from config_constants import OPEN_NODES_COLOR, CLOSED_NODES_COLOR, SHOW_STEPS_DELAY
+from config_constants import OPEN_NODES_COLOR, CLOSED_NODES_COLOR, SHOW_STEPS_DELAY, MOVES
 from color_constants import Color
-
-# all possible moves from one square to another
-MOVES = [
-    (0, -1),  # up
-    (1, 0),  # right
-    (0, 1),  # down
-    (-1, 0),  # left
-    # TODO:
-    #   - not working properly with diagonal moves
-    # (1, -1),  # up right
-    # (1, 1),  # down right
-    # (-1, 1),  # down left
-    # (-1, -1)  # up left
-]
 
 Board = List[List[Node]]
 HeuristicFunction = Callable[[Node, Node], int]

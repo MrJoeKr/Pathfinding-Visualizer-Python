@@ -9,6 +9,18 @@ FPS = 120
 ROWS = 40
 COLS = 53
 
+# all possible moves from one square to another
+MOVES = [
+    (0, -1),  # up
+    (1, 0),  # right
+    (0, 1),  # down
+    (-1, 0),  # left
+    # (1, -1),  # up right
+    # (1, 1),  # down right
+    # (-1, 1),  # down left
+    # (-1, -1)  # up left
+]
+
 # The delay needs to be bigger than the time of the path-finding algorithm
 SHOW_STEPS_DELAY = 0.001
 SHOW_PATH_DELAY = 0.01
