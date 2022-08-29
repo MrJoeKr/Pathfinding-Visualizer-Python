@@ -46,7 +46,6 @@ def search_a_star(
         
         # Best node so far
         if draw_queue is not None:
-            # print("Appending node")
             draw_queue.append((CLOSED_NODES_COLOR, node))
 
         if node == board.end_node:
@@ -77,7 +76,7 @@ def search_a_star(
 
             heappush(heap, (f, y, x))
 
-            if draw_queue:
+            if draw_queue is not None:
                 draw_queue.append((OPEN_NODES_COLOR, child_node))
 
     # No path found
@@ -90,6 +89,50 @@ def search_dfs(
         heuristic: HeuristicFunction) -> None:
     
     pass
+
+# Search using BFS method
+def search_bfs(
+        board: NodeBoard,
+        draw_queue: Optional[DrawDeque],
+        heuristic: HeuristicFunction) -> None:
+
+    queue: Deque[Node] = deque()
+
+    queue.append(board.start_node)
+    board.start_node.visited = True
+
+    while queue:
+
+        node = queue.popleft()
+
+        if node is board.end_node:
+            get_path_list(board.path, node)
+            return
+
+        if draw_queue is not None:
+            draw_queue.append((CLOSED_NODES_COLOR, node))
+
+        for (add_x, add_y) in MOVES:
+
+            x = node.x + add_x
+            y = node.y + add_y
+
+            if x < 0 or x >= board.cols or y < 0 or y >= board.rows:
+                continue
+
+            child_node = board.get_node(y, x)
+
+            if child_node.visited or child_node.is_wall():
+                continue
+
+            child_node.parent = node
+            child_node.visited = True
+
+            queue.append(child_node)
+
+            if draw_queue is not None:
+                draw_queue.append((OPEN_NODES_COLOR, child_node))
+
 
 # General function for finding path between two nodes in NodeBoard
 def search_path(
@@ -112,8 +155,6 @@ def search_path(
         # Draw nodes
         while draw_queue:
             color, node = draw_queue.popleft()
-
-            # print(f"Color : {color}")
 
             # TODO -> make pop up animation better
             # node.draw_pop_up_animation(color)
@@ -139,7 +180,8 @@ def get_path_list(out_path_list: List[Node], end_node: Node) -> None:
 _PATH_ALGORITHMS: List[Tuple[str, SearchFunction]] = \
     [
         ("A Star", search_a_star),
-        ("DFS", search_dfs)
+        ("BFS", search_bfs),
+        ("DFS", search_dfs),
     ]
 
 _HEURISTICS: List[Tuple[str, HeuristicFunction]] = \

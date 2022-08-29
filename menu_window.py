@@ -65,7 +65,7 @@ class MenuWindow:
         self.display.blit(text, algo_rect)
 
     def _update_heuristic_selection(self, idx: int=0) -> None:
-        idx %= len(self.algorithms)
+        idx %= len(self.heuristics)
 
         self.heuristic_idx = idx
         self.selected_heuristic_text, self.selected_heuristic_func = self.heuristics[self.heuristic_idx]
