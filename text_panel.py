@@ -1,3 +1,4 @@
+from typing import Optional
 import pygame
 from color_constants import Color
 
@@ -15,7 +16,7 @@ class TextPanel:
         self._update_rect = pygame.Rect(x, y, width, height)
         
         # Default font
-        self.font = pygame.font.SysFont('Arial', 40)
+        self.font: pygame.font.Font = pygame.font.SysFont('Arial', 40)
 
         self.draw_display()
 
@@ -35,8 +36,13 @@ class TextPanel:
         self.draw_display()
 
     # x and y are coords from top-left corner of the text panel
-    def write_text(self, x: int, y: int, what: str, color: Color) -> None:
-        the_text = self.font.render(what, False, color)
+    # Font is optional
+    def write_text(self, x: int, y: int, what: str, color: Color, centered: bool=False, font: Optional[pygame.font.Font]=None) -> None:
+        # Default font
+        if (font is None):
+            font = self.font
+
+        the_text = font.render(what, True, color)
         self.display.blit(the_text, (x + self.x , y + self.y))
 
         self.update_display()

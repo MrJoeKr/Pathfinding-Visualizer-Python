@@ -83,7 +83,15 @@ def search_a_star(
     # No path found
     return
 
+# Search using DFS method
+def search_dfs(
+        board: NodeBoard,
+        draw_queue: Optional[DrawDeque],
+        heuristic: HeuristicFunction) -> None:
+    
+    pass
 
+# General function for finding path between two nodes in NodeBoard
 def search_path(
         board: NodeBoard,
         show_steps: bool=False,
@@ -126,3 +134,14 @@ def get_path_list(out_path_list: List[Node], end_node: Node) -> None:
         node = node.parent
 
     out_path_list.reverse()
+
+
+_PATH_ALGORITHMS: List[Tuple[str, SearchFunction]] = \
+    [
+        ("A Star", search_a_star),
+        ("DFS", search_dfs)
+    ]
+
+
+def get_algorithms_list() -> List[Tuple[str, SearchFunction]]:
+    return _PATH_ALGORITHMS

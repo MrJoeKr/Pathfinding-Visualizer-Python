@@ -9,6 +9,7 @@ from color_constants import Color
 from node_board_object import NodeBoard
 from node_object import Node
 from path_finding_algorithm import search_path
+import path_finding_algorithm
 from text_panel import TextPanel
 from tick_box import TickBox
 
@@ -24,11 +25,18 @@ _TICK_BOX_CLICK_DELAY = 0.1
 class BoardWindow:
 
     def __init__(
-            self, display: pygame.Surface, rows: int, cols: int):
+            self, display: pygame.Surface, 
+            rows: int, 
+            cols: int, 
+            search_func: path_finding_algorithm.SearchFunction=path_finding_algorithm.search_a_star, 
+            heuristic_func:path_finding_algorithm.HeuristicFunction=path_finding_algorithm.euclidian_distance):
 
         display.fill(color_constants.BLACK)
 
         self.board = NodeBoard(display, rows, cols)
+
+        self.algorithm = search_func
+        self.heuristic = heuristic_func
 
         # Text panel
         self.text_panel = TextPanel(
@@ -174,7 +182,7 @@ class BoardWindow:
                     show_steps = self.tick_box.is_ticked()
 
                     # print("Starting algorithm")
-                    search_path(self.board, show_steps=show_steps)
+                    search_path(self.board, show_steps=show_steps, search_func=self.algorithm, heuristic=self.heuristic)
                     # print("Done")
 
                     self._update_text()
