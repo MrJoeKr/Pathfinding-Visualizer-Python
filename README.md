@@ -16,9 +16,9 @@ Click on the **tick-box** in the bottom-right corner
   - **LEFT MOUSE CLICK** for drawing start / end / wall node
   - **RIGHT MOUSE CLICK** for deleting start / end / wall node
   - **SPACE** to start the path finding
-  - **BACKSPACE** or **"R"** to reset board
+  - **"R"** to reset board
+  - **BACKSPACE** to go to menu
   - **ESCAPE** to exit program
-
 
     
 ### Enjoy.
