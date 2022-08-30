@@ -205,7 +205,7 @@ class BoardWindow:
 
         self._update_text()
 
-        self.board.draw_path()
+        threading.Thread(target=self.board.draw_path()).start()
 
     def quit_app(self) -> None:
         self.running = False
