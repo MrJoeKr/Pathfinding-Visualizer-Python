@@ -33,6 +33,13 @@ class TickBox:
     # Draw tickbox on the display
     def draw_tick_box(self) -> None:
 
+        self._draw_tick_box()
+
+        self._update_tick()
+        self.update_display()
+
+    def _draw_tick_box(self) -> None:
+
         # Background box
         background_rect = pygame.Rect(self.x, self.y, self.width, self.width)
         pygame.draw.rect(self.display, BORDER_COLOR, background_rect)
@@ -44,16 +51,10 @@ class TickBox:
                                       self.width - self.foreground_padding * 2)
         pygame.draw.rect(self.display, BACKGROUND_COLOR, foreground_rect)
 
-        self.update_display()
-
-    # Tick / untick box and return whether it's ticked
-    def tick_untick_box(self) -> bool:
-
-        # Switch boolean
-        self.ticked = not self.ticked
+    def _update_tick(self) -> None:
 
         if not self.ticked:
-            self.draw_tick_box()
+            self._draw_tick_box()
 
         else:
             # Draw cross
@@ -73,6 +74,13 @@ class TickBox:
 
             pygame.draw.line(self.display, color_constants.GREEN, start_pos, end_pos, width=CROSS_WIDTH)
 
+    # Tick / untick box and return whether it's ticked
+    def tick_untick_box(self) -> bool:
+
+        # Switch boolean
+        self.ticked = not self.ticked
+
+        self._update_tick()
         self.update_display()
 
         return self.ticked
