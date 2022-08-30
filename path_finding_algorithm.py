@@ -4,7 +4,7 @@ from heapq import heappop, heappush
 from collections import deque
 import threading
 import time
-import pygame
+import math
 
 from node_board_object import NodeBoard
 from node_object import Node
@@ -23,7 +23,7 @@ def manhattan_distance(node_a: Node, node_b: Node) -> int:
     return abs(node_a.x - node_b.x) + abs(node_a.y - node_b.y)
 
 def euclidian_distance(node_a: Node, node_b: Node) -> int:
-    return int((node_a.x - node_b.x)**2 + (node_a.y - node_b.y)**2)
+    return math.sqrt((node_a.x - node_b.x)**2 + (node_a.y - node_b.y)**2)
 
 # TODO: INCORRECT IMPLEMENTATION
 # Find path from start to end node using A* star
@@ -35,7 +35,7 @@ def search_a_star(
     # Init priority queue
     # (node.f, node.y, node.x)
     heap: List[Tuple[int, int, int]] = [(0, board.start_node.y, board.start_node.x)]
-    board.start_node.visited = True
+    board.start_node.g = 0
 
     rows, cols = board.rows, board.cols
 
@@ -66,13 +66,13 @@ def search_a_star(
 
             child_node = board.get_node(y, x)
 
-            # Wall or was visited before
-            if child_node.is_wall() or child_node.visited:
+            # If node wall or has already better g value
+            if child_node.is_wall() or child_node.g <= node.g + 1:
+                # print(child_node.g, y, x)
                 continue
             
             # Valid node
             child_node.parent = node
-            child_node.visited = True
             child_node.g = node.g + 1
             f = child_node.g + heuristic(child_node, board.end_node)
 
@@ -96,7 +96,8 @@ def search_dfs(
 def search_bfs(
         board: NodeBoard,
         draw_queue: Optional[DrawDeque],
-        heuristic: HeuristicFunction) -> None:
+        # Heuristic not used
+        _: HeuristicFunction) -> None:
 
     queue: Deque[Node] = deque()
 

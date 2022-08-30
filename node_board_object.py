@@ -50,12 +50,12 @@ class NodeBoard:
         self.end_node = None
         self.board = self._init_board()
 
-        self.clear_path()
+        self.clear_solution()
 
         self.draw_board()
 
     # Resets node flags and removes found path
-    def clear_path(self) -> None:
+    def clear_solution(self) -> None:
         self.path.clear()
         self.finding_path_finished = False
 

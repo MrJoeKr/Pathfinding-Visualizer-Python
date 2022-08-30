@@ -1,5 +1,6 @@
 import time
-from typing import Optional
+import math
+from typing import Optional, Union
 import pygame
 from config_constants import NODE_SIZE, NODE_BORDER_COLOR, NODE_COLOR, FOREGROUND_PADDING, WALL_COLOR
 
@@ -34,7 +35,10 @@ class Node():
         self._update_rect = pygame.Rect(self.draw_x, self.draw_y, self.width, self.width)
 
         # For A* algorithm
-        self.g = 0
+        self.g: Union[float, int] = math.inf
+
+        # For other algorithms
+        self.flag: int = 0
 
         self._is_wall = False
         self.visited = False
@@ -44,7 +48,8 @@ class Node():
         return self.position == other.position
 
     def clear_flags(self) -> None:
-        self.g = 0
+        self.g = math.inf
+        self.flag = 0
         self.parent = None
         self.visited = False
 

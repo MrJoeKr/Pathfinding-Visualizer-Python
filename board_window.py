@@ -197,7 +197,7 @@ class BoardWindow:
     def _process_pathfinding(self):
 
         # Clear every time it starts
-        self.board.clear_path()
+        self.board.clear_solution()
 
         show_steps = self.tick_box.is_ticked()
 
