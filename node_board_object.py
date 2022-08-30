@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Callable, List, Optional
 import pygame
 import time
 
@@ -71,6 +71,30 @@ class NodeBoard:
 
     def get_node(self, y: int, x: int):
         return self.board[y][x]
+
+    # Get all node neighbours (including walls)
+    # Predicate can be used to select specific node neigbours
+    # If predicate is True, node is selected
+    def get_node_neighbours(self, node: Node, predicate: Callable[[Node], bool]=lambda _: True) -> List[Node]:
+
+        out = []
+
+        for add_x, add_y in MOVES:
+            
+            x = node.x + add_x
+            y = node.y + add_y 
+
+            # Invalid position
+            if x < 0 or x >= self.cols \
+                    or y < 0 or y >= self.rows:
+                continue
+            
+            child = self.get_node(y, x)
+
+            if predicate(child):
+                out.append(child)
+
+        return out
 
     def draw_path(self) -> None:
 

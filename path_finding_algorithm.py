@@ -25,7 +25,6 @@ def manhattan_distance(node_a: Node, node_b: Node) -> int:
 def euclidian_distance(node_a: Node, node_b: Node) -> int:
     return math.sqrt((node_a.x - node_b.x)**2 + (node_a.y - node_b.y)**2)
 
-# TODO: INCORRECT IMPLEMENTATION
 # Find path from start to end node using A* star
 def search_a_star(
         board: NodeBoard,
@@ -36,8 +35,6 @@ def search_a_star(
     # (node.f, node.y, node.x)
     heap: List[Tuple[int, int, int]] = [(0, board.start_node.y, board.start_node.x)]
     board.start_node.g = 0
-
-    rows, cols = board.rows, board.cols
 
     while heap:
 
@@ -54,29 +51,19 @@ def search_a_star(
             get_path_list(board.path, node)
             return
 
-        for add_x, add_y in MOVES:
-            
-            x = node.x + add_x
-            y = node.y + add_y
-            
-            # Invalid position
-            if x < 0 or x >= cols \
-                    or y < 0 or y >= rows:
-                continue
+        child_nodes: List[Node] = \
+            board.get_node_neighbours(
+                node, 
+                predicate=lambda child: child.g > node.g + 1 and not child.is_wall())
 
-            child_node = board.get_node(y, x)
+        # Valid nodes
+        for child_node in child_nodes:
 
-            # If node wall or has already better g value
-            if child_node.is_wall() or child_node.g <= node.g + 1:
-                # print(child_node.g, y, x)
-                continue
-            
-            # Valid node
             child_node.parent = node
             child_node.g = node.g + 1
             f = child_node.g + heuristic(child_node, board.end_node)
 
-            heappush(heap, (f, y, x))
+            heappush(heap, (f, child_node.y, child_node.x))
 
             if draw_queue is not None:
                 draw_queue.append((OPEN_NODES_COLOR, child_node))
