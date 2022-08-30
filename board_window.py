@@ -201,7 +201,14 @@ class BoardWindow:
 
         show_steps = self.tick_box.is_ticked()
 
-        search_path(self.board, show_steps=show_steps, search_func=self.path_algorithm, heuristic=self.heuristic)
+        # TODO : check if threading possible
+        # threading.Thread(target=search_path(self.board, show_steps=show_steps, search_func=self.path_algorithm, heuristic=self.heuristic)).start()
+
+        search_path(
+            self.board,
+            show_steps=show_steps,
+            search_func=self.path_algorithm,
+            heuristic=self.heuristic)
 
         self._update_text()
 
