@@ -7,7 +7,7 @@ import time
 import math
 
 from node_board_object import NodeBoard
-from node_object import Node
+from node_object import Node, DEFAULT_FLAG_VALUE
 from config_constants import OPEN_NODES_COLOR, CLOSED_NODES_COLOR, SHOW_STEPS_DELAY, MOVES
 from config_constants import START_POINT_COLOR, END_POINT_COLOR
 from color_constants import Color
@@ -18,6 +18,10 @@ PathList = List[Node]
 DrawDeque = Deque[Tuple[Color, Node]]
 SearchFunction = Callable[[NodeBoard, Optional[DrawDeque], HeuristicFunction], None]
 
+# Flags for DFS
+WHITE = DEFAULT_FLAG_VALUE
+GRAY = 1
+BLACK = 2
 
 def manhattan_distance(node_a: Node, node_b: Node) -> int:
     return abs(node_a.x - node_b.x) + abs(node_a.y - node_b.y)
@@ -75,9 +79,43 @@ def search_a_star(
 def search_dfs(
         board: NodeBoard,
         draw_queue: Optional[DrawDeque],
-        heuristic: HeuristicFunction) -> None:
-    
-    pass
+        _: HeuristicFunction) -> None:
+
+    _dfs_help(board.start_node, board, draw_queue)
+
+# TODO - to be removed
+import sys
+import config_constants
+LIMIT = config_constants.ROWS * config_constants.COLS + 1
+sys.setrecursionlimit(LIMIT)
+
+def _dfs_help(
+    node: Node,
+    board: NodeBoard,
+    draw_queue: Optional[DrawDeque]) -> None:
+
+    if node is board.end_node:
+        get_path_list(board.path, node)
+        return
+
+    node.flag = GRAY
+
+    if draw_queue is not None:
+        draw_queue.append((OPEN_NODES_COLOR, node))
+
+    for child in board.get_node_neighbours(node):
+
+        if child.is_wall() or child.flag != WHITE:
+            continue
+
+        child.parent = node
+        _dfs_help(child, board, draw_queue)
+
+    node.flag = BLACK
+
+    if draw_queue is not None:
+        draw_queue.append((CLOSED_NODES_COLOR, node))
+
 
 # Search using BFS method
 def search_bfs(
@@ -102,18 +140,13 @@ def search_bfs(
         if draw_queue is not None:
             draw_queue.append((CLOSED_NODES_COLOR, node))
 
-        for (add_x, add_y) in MOVES:
+        child_nodes = \
+            board.get_node_neighbours(
+                node,
+                lambda child: not child.visited and not child.is_wall()
+            ) 
 
-            x = node.x + add_x
-            y = node.y + add_y
-
-            if x < 0 or x >= board.cols or y < 0 or y >= board.rows:
-                continue
-
-            child_node = board.get_node(y, x)
-
-            if child_node.visited or child_node.is_wall():
-                continue
+        for child_node in child_nodes:
 
             child_node.parent = node
             child_node.visited = True
@@ -177,8 +210,8 @@ def get_path_list(out_path_list: List[Node], end_node: Node) -> None:
 _PATH_ALGORITHMS: List[Tuple[str, SearchFunction]] = \
     [
         ("A Star", search_a_star),
-        ("BFS", search_bfs),
-        ("DFS", search_dfs),
+        ("Breadth First Search", search_bfs),
+        ("Depth First Search", search_dfs),
     ]
 
 _HEURISTICS: List[Tuple[str, HeuristicFunction]] = \
