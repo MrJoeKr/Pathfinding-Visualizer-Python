@@ -7,6 +7,7 @@ from config_constants import NODE_SIZE, NODE_BORDER_COLOR, NODE_COLOR, FOREGROUN
 
 Color = tuple[int, int, int]
 
+DEFAULT_FLAG_VALUE = 0
 
 class Node():
     # Class for nodes -> squares on the board
@@ -38,7 +39,7 @@ class Node():
         self.g: Union[float, int] = math.inf
 
         # For other algorithms
-        self.flag: int = 0
+        self.flag: int = DEFAULT_FLAG_VALUE
 
         self._is_wall = False
         self.visited = False
