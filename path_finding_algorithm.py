@@ -92,11 +92,11 @@ sys.setrecursionlimit(LIMIT)
 def _dfs_help(
     node: Node,
     board: NodeBoard,
-    draw_queue: Optional[DrawDeque]) -> None:
+    draw_queue: Optional[DrawDeque]) -> bool:
 
     if node is board.end_node:
         get_path_list(board.path, node)
-        return
+        return True
 
     node.flag = GRAY
 
@@ -109,12 +109,17 @@ def _dfs_help(
             continue
 
         child.parent = node
-        _dfs_help(child, board, draw_queue)
+
+        if _dfs_help(child, board, draw_queue):
+            return True
 
     node.flag = BLACK
 
     if draw_queue is not None:
         draw_queue.append((CLOSED_NODES_COLOR, node))
+
+
+    return False
 
 
 # Search using BFS method
