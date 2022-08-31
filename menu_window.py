@@ -138,7 +138,7 @@ class MenuWindow:
 
         # Display text
         start_font = pygame.font.Font(None, 58)
-        start_text = start_font.render("Start Drawing", True, color_constants.WHITE)
+        start_text = start_font.render("Go To Board", True, color_constants.WHITE)
 
         self._draw_text_to_middle_of_rect(start_text, self.start_button_rect)
 
