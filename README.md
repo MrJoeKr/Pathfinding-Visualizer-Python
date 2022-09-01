@@ -4,7 +4,7 @@ Application which visualizes various pathfinding algorithms. Made in Python with
 # Setup
 - Start **``run.pyw``** file to run the program.
 - In the main menu, choose algorithm and heuristic (if heurestic is used)
-- Click **``Start Drawing``** to start experimenting
+- Click **``Go To Board``** to start experimenting
 
 # Requirements:
   - Python 3.x
