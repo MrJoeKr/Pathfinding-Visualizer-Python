@@ -252,7 +252,7 @@ def search_path(
 
 _PATH_ALGORITHMS: List[Tuple[str, SearchFunction]] = \
     [
-        ("A Star", search_a_star),
+        ("A Star Search", search_a_star),
         ("Breadth First Search", search_bfs),
         ("Depth First Search", search_dfs),
     ]
