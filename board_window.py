@@ -8,7 +8,7 @@ from config_constants import *
 from color_constants import Color
 from node_board_object import NodeBoard
 from node_object import Node
-from path_finding_algorithm import search_path
+from path_finder import PathFinder
 import path_finding_algorithm
 from text_panel import TextPanel
 from tick_box import TickBox
@@ -204,11 +204,10 @@ class BoardWindow:
         # TODO : check if threading possible
         # threading.Thread(target=search_path(self.board, show_steps=show_steps, search_func=self.path_algorithm, heuristic=self.heuristic)).start()
 
-        search_path(
-            self.board,
-            show_steps=show_steps,
+        PathFinder(
             search_func=self.path_algorithm,
-            heuristic=self.heuristic)
+            heuristic=self.heuristic,
+            show_steps=show_steps).start_search(self.board)
 
         self._update_text()
 

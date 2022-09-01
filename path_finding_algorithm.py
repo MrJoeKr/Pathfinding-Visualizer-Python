@@ -220,46 +220,6 @@ def search_bfs(
                 draw_queue.append((OPEN_NODES_COLOR, child_node))
 
 
-# General function for finding path between two nodes in NodeBoard
-def search_path(
-        board: NodeBoard,
-        show_steps: bool=False,
-        search_func: SearchFunction=search_a_star,
-        heuristic: HeuristicFunction=euclidian_distance) -> None:
-
-    if not show_steps:
-        # Threading not needed
-        search_func(board, None, heuristic)
-
-    else:
-        draw_queue: DrawDeque = deque()
-
-        thread = threading.Thread(
-            target=search_func, args=(board, draw_queue, heuristic))
-        thread.start()
-
-        # Draw nodes
-        while draw_queue:
-            color, node = draw_queue.popleft()
-
-            # TODO -> make pop up animation better
-            # node.draw_pop_up_animation(color)
-
-            node.draw_node(color)
-
-            if node is board.start_node:
-                node.draw_as_circle(START_POINT_COLOR)
-
-            if node is board.end_node:
-                node.draw_as_circle(END_POINT_COLOR)
-
-            # Speed of drawing
-            time.sleep(SHOW_STEPS_DELAY)
-
-    board.finding_path_finished = True
-
-    # print("END")
-
 _PATH_ALGORITHMS: List[Tuple[str, SearchFunction]] = \
     [
         ("A Star Search", search_a_star),
@@ -269,8 +229,8 @@ _PATH_ALGORITHMS: List[Tuple[str, SearchFunction]] = \
 
 _HEURISTICS: List[Tuple[str, HeuristicFunction]] = \
     [
-        ("Euclidian Distance", euclidian_distance),
         ("Manhattan Distance", manhattan_distance),
+        ("Euclidian Distance", euclidian_distance),
         ("Hamming Distance", hamming_distance),
     ]
 
