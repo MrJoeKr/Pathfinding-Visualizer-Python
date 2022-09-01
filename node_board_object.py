@@ -63,7 +63,13 @@ class NodeBoard:
             for node in row:
                 node.clear_flags()
 
-                if node is not self.start_node and node is not self.end_node:
+                if node is self.start_node:
+                    node.draw_start_node()
+
+                elif node is self.end_node:
+                    node.draw_end_node()
+
+                else:
                     node.draw_node()
 
     def get_board(self):

@@ -2,7 +2,7 @@ import time
 import math
 from typing import Optional, Union
 import pygame
-from config_constants import NODE_SIZE, NODE_BORDER_COLOR, NODE_COLOR, FOREGROUND_PADDING, WALL_COLOR
+from config_constants import NODE_SIZE, NODE_BORDER_COLOR, NODE_COLOR, FOREGROUND_PADDING, WALL_COLOR, START_POINT_COLOR, END_POINT_COLOR
 
 
 Color = tuple[int, int, int]
@@ -93,6 +93,22 @@ class Node():
                 draw_y + FOREGROUND_PADDING,
                 self.width - FOREGROUND_PADDING * 2,
                 self.width - FOREGROUND_PADDING * 2))
+
+        self.display_update()
+
+    def draw_start_node(self) -> None:
+
+        self.draw_node(NODE_COLOR)
+
+        self.draw_as_circle(START_POINT_COLOR)
+
+        self.display_update()
+
+    def draw_end_node(self) -> None:
+
+        self.draw_node(NODE_COLOR)
+
+        self.draw_as_circle(END_POINT_COLOR)
 
         self.display_update()
 

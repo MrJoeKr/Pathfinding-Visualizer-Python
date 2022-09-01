@@ -50,7 +50,13 @@ class BoardWindow:
         # Used for tick box threading to wait between clicks
         self._tick_box_executed: bool = False
 
+        # If stops running is set to False
         self.running = True
+
+        self.user_wants_menu = False
+
+        # To visualize only once per key press
+        self._visualizing_started = False
 
     def draw_window(self) -> None:
         self.display.fill(color_constants.BLACK)
@@ -170,7 +176,7 @@ class BoardWindow:
         return node
 
     # Process keys
-    # Returns true if user wants to go back to main menu
+    # Returns true if user pressed any valid key
     def process_key_events(self) -> bool:
 
         for event in pygame.event.get():
@@ -178,40 +184,84 @@ class BoardWindow:
             if event.type == pygame.QUIT:
                 self.quit_app()
 
-            if event.type == pygame.KEYDOWN:
+                return True
+
+            elif event.type == pygame.KEYDOWN:
 
                 # Back to main menu
                 if event.key == pygame.K_BACKSPACE or event.key == pygame.K_ESCAPE:
+                    self.user_wants_menu = True
+
                     return True
 
                 # Reset board
-                if event.key == pygame.K_r:
+                elif event.key == pygame.K_r:
                     self.reset_board_window()
 
+                    return True
+
                 # Start the algorithm (can be started more than once)
-                if self.board.end_node is not None and event.key == pygame.K_SPACE:
-                    self._process_pathfinding()
+                elif self.board.end_node is not None and event.key == pygame.K_SPACE:
+                    
+                    if not self._visualizing_started:
+                        self._visualizing_started = True
+                        self._process_pathfinding()
+
+                    return True
 
         return False
+
 
     def _process_pathfinding(self):
 
         # Clear every time it starts
         self.board.clear_solution()
 
+        self._search_path_async()
+        # self._search_path_sync()
+
+        self._visualizing_started = False
+
+    def _search_path_async(self) -> None:
         show_steps = self.tick_box.is_ticked()
 
-        # TODO : check if threading possible
-        # threading.Thread(target=search_path(self.board, show_steps=show_steps, search_func=self.path_algorithm, heuristic=self.heuristic)).start()
-
-        PathFinder(
+        path_finder = PathFinder(
             search_func=self.path_algorithm,
             heuristic=self.heuristic,
-            show_steps=show_steps).start_search(self.board)
+            show_steps=show_steps)
+
+        threading.Thread(target=path_finder.start_search, args=(self.board,)).start()
+
+        skip_path = False
+        while not path_finder.finding_path_finished:
+            
+            key_pressed = self.process_key_events()
+
+            if key_pressed:
+                path_finder.stop_visualizing()
+                skip_path = True
+                break
+            
+            # To prevent lagging
+            time.sleep(0.1)
 
         self._update_text()
 
-        threading.Thread(target=self.board.draw_path()).start()
+        if not skip_path:
+            self.board.draw_path()
+
+    def _search_path_sync(self) -> None:
+
+        show_steps = self.tick_box.is_ticked()
+
+        path_finder = PathFinder(
+            search_func=self.path_algorithm,
+            heuristic=self.heuristic,
+            show_steps=show_steps)
+
+        path_finder.start_search(self.board)
+
+        self.board.draw_path()
 
     def quit_app(self) -> None:
         self.running = False

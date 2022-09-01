@@ -61,11 +61,13 @@ class Application:
 
             self._board_window.process_mouse_events()
 
-            back_to_menu = self._board_window.process_key_events()
+            self._board_window.process_key_events()
 
-            if back_to_menu:
+            if self._board_window.user_wants_menu:
                 self._run_menu_window()
                 self._board_window.draw_window()
+
+                self._board_window.user_wants_menu = False
 
             MAINCLOCK.tick(FPS)
 

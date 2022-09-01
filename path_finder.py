@@ -19,7 +19,13 @@ class PathFinder:
         self.heuristic: Optional[HeuristicFunction] = heuristic
         self.show_steps = show_steps
 
+        self.finding_path_finished = False
+
+        # For threading purposes
+        self._can_visualize = True
+
     # General function for finding path between two nodes in NodeBoard
+    # Starts new thread when show_steps is True
     def start_search(self, board: NodeBoard) -> None:
 
         if not self.show_steps:
@@ -35,7 +41,7 @@ class PathFinder:
             thread.start()
 
             # Draw nodes
-            while draw_queue:
+            while draw_queue and self.can_visualize():
                 color, node = draw_queue.popleft()
 
                 # TODO -> make pop up animation better
@@ -52,4 +58,11 @@ class PathFinder:
                 # Speed of drawing
                 time.sleep(SHOW_STEPS_DELAY)
 
+        self.finding_path_finished = True
         board.finding_path_finished = True
+
+    def stop_visualizing(self) -> None:
+        self._can_visualize = False
+
+    def can_visualize(self) -> bool:
+        return self._can_visualize
