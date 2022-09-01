@@ -8,12 +8,12 @@ import math
 
 from node_board_object import NodeBoard
 from node_object import Node, DEFAULT_FLAG_VALUE
-from config_constants import OPEN_NODES_COLOR, CLOSED_NODES_COLOR, SHOW_STEPS_DELAY, MOVES
+from config_constants import OPEN_NODES_COLOR, CLOSED_NODES_COLOR, SHOW_STEPS_DELAY
 from config_constants import START_POINT_COLOR, END_POINT_COLOR
 from color_constants import Color
 
 Board = List[List[Node]]
-HeuristicFunction = Callable[[Node, Node], int]
+HeuristicFunction = Callable[[Node, Node], float]
 PathList = List[Node]
 DrawDeque = Deque[Tuple[Color, Node]]
 SearchFunction = Callable[[NodeBoard, Optional[DrawDeque], HeuristicFunction], None]
@@ -23,8 +23,8 @@ WHITE = DEFAULT_FLAG_VALUE
 GRAY = 1
 BLACK = 2
 
-def manhattan_distance(node_a: Node, node_b: Node) -> int:
-    return abs(node_a.x - node_b.x) + abs(node_a.y - node_b.y)
+def manhattan_distance(a: Node, b: Node) -> int:
+    return abs(a.x - b.x) + abs(a.y - b.y)
 
 def euclidian_distance(node_a: Node, node_b: Node) -> float:
     return math.sqrt((node_a.x - node_b.x)**2 + (node_a.y - node_b.y)**2)
@@ -42,15 +42,22 @@ def search_a_star(
         draw_queue: Optional[DrawDeque],
         heuristic: HeuristicFunction) -> None:
 
+    # Depth is variable that ensures if f-values are same,
+    # nodes in bigger depth (smaller value) are traversed first
+    depth = board.rows * board.cols
+
     # Init priority queue
-    # (node.f, node.y, node.x)
-    heap: List[Tuple[int, int, int]] = [(0, board.start_node.y, board.start_node.x)]
+    # (node.f, depth, node.y, node.x)
+    heap: List[Tuple[int, int, int]] = [(0, depth, board.start_node.y, board.start_node.x)]
     board.start_node.g = 0
 
     while heap:
 
         tup: Tuple[int, int, int] = heappop(heap)
-        _, node_y, node_x = tup
+        _, _, node_y, node_x = tup
+
+        # Inverted -> decrease to prioritize more
+        depth -= 1
 
         node = board.get_node(node_y, node_x)
         
@@ -74,7 +81,9 @@ def search_a_star(
             child_node.g = node.g + 1
             f = child_node.g + heuristic(child_node, board.end_node)
 
-            heappush(heap, (f, child_node.y, child_node.x))
+            # print(f"Pushing: {(f, child_node.y, child_node.x)}")
+
+            heappush(heap, (f, depth, child_node.y, child_node.x))
 
             if draw_queue is not None:
                 draw_queue.append((OPEN_NODES_COLOR, child_node))
@@ -249,6 +258,7 @@ def search_path(
 
     board.finding_path_finished = True
 
+    # print("END")
 
 _PATH_ALGORITHMS: List[Tuple[str, SearchFunction]] = \
     [
