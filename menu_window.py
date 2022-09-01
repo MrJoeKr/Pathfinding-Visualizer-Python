@@ -9,14 +9,14 @@ import path_finding_algorithm
 from config_constants import DISPLAY_WIDTH, DISPLAY_HEIGTH
 
 CENTER_WIDTH = DISPLAY_WIDTH / 2
-TITLE_HEIGHT = DISPLAY_HEIGTH / 5
+TITLE_HEIGHT = DISPLAY_HEIGTH / 6
 
 ALGO_TEXT_HEIGHT = TITLE_HEIGHT + 90
 ALGO_BUTTON_HEIGHT = ALGO_TEXT_HEIGHT + 50
 BUTTON_WIDTH = 400
 BUTTON_HEIGHT = 50
 
-HEURISTIC_TEXT_HEIGHT = ALGO_BUTTON_HEIGHT + 90
+HEURISTIC_TEXT_HEIGHT = ALGO_BUTTON_HEIGHT + 70
 HEURISTIC_BUTTON_HEIGHT = HEURISTIC_TEXT_HEIGHT + 50
 
 START_BUTTON_HEIGHT = HEURISTIC_TEXT_HEIGHT + 150
@@ -84,8 +84,28 @@ class MenuWindow:
 
         pygame.display.update(self.heuristic_button)
 
-    def _init_heuristic_button(self) -> None:
+    def _draw_arrow_rect(self, rect: pygame.Rect, left: bool=True) -> None:
 
+        border_radius: int = min(rect.width, rect.height) // 4
+
+        pygame.draw.rect(self.display, color_constants.BLACK, rect, border_radius=border_radius)
+
+        # Draw arrow lines
+        if left:
+            x1 = rect.x + rect.width - rect.width / 4
+        else:
+            x1 = rect.x + rect.width / 4
+
+        x2 = rect.x + rect.width / 2
+
+        y1 = rect.y + rect.height / 10
+        y2 = rect.y + rect.height / 2
+        y3 = rect.y + rect.height - (y1 - rect.y)
+        points = [(x1, y1), (x2, y2), (x1, y3)]
+        pygame.draw.lines(self.display, color_constants.WHITE, False, points, width=4)
+
+    def _init_heuristic_button(self) -> None:
+ 
         self._draw_heuristic_title_text()
 
         self.heuristic_button = pygame.Rect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT)
@@ -99,8 +119,8 @@ class MenuWindow:
         self.left_heuristic_arrow = pygame.Rect(self.heuristic_button.x - arrow_padding - arrow_width, self.heuristic_button.y, arrow_width, self.heuristic_button.height)
         self.right_heuristic_arrow = pygame.Rect(self.heuristic_button.x + self.heuristic_button.width + arrow_padding, self.heuristic_button.y, arrow_width, self.heuristic_button.height)
 
-        pygame.draw.rect(self.display, color_constants.BLACK, self.left_heuristic_arrow)
-        pygame.draw.rect(self.display, color_constants.BLACK, self.right_heuristic_arrow)
+        self._draw_arrow_rect(self.left_heuristic_arrow, left=True)
+        self._draw_arrow_rect(self.right_heuristic_arrow, left=False)
 
     # Algo text
     def _draw_algo_title_text(self) -> None:
@@ -126,8 +146,8 @@ class MenuWindow:
         self.left_algo_arrow = pygame.Rect(self.algo_button.x - arrow_padding - arrow_width, self.algo_button.y, arrow_width, self.algo_button.height)
         self.right_algo_arrow = pygame.Rect(self.algo_button.x + self.algo_button.width + arrow_padding, self.algo_button.y, arrow_width, self.algo_button.height)
 
-        pygame.draw.rect(self.display, color_constants.BLACK, self.left_algo_arrow)
-        pygame.draw.rect(self.display, color_constants.BLACK, self.right_algo_arrow)
+        self._draw_arrow_rect(self.left_algo_arrow, left=True)
+        self._draw_arrow_rect(self.right_algo_arrow, left=False)
 
     def _init_start_button(self) -> None:
 
