@@ -1,10 +1,10 @@
 # Path-visualizer-in-python
-Application which visualizes various pathfinding algorithms. Made in Python with the use of module [pygame](https://www.pygame.org/).
+Application which visualizes various pathfinding algorithms, including *A Star Search* or *Breadth First Search*. Made in Python with the use of module [pygame](https://www.pygame.org/).
 
 # Setup
 - Firstly, see [requirements](#requirements). The program cannot be run without them
 - Start **``run.pyw``** file to run the program.
-- In the main menu, choose algorithm and heuristic (if heurestic is used)
+- In the main menu, choose algorithm and heuristic (heurestic is used only for *A Star Search*)
 - Click **``Go To Board``** to start experimenting
 
 # Requirements:
