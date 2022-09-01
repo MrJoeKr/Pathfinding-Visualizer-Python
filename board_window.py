@@ -276,10 +276,27 @@ class BoardWindow:
             # To prevent lagging
             time.sleep(0.1)
 
-        self._update_text()
-
         if not skip_path:
-            self.board.draw_path()
+            # Show path length
+            self._update_text()
+
+            self._draw_path_async()
+
+    def _draw_path_async(self) -> None:
+
+        threading.Thread(target=self.board.draw_path).start()
+
+        while not self.board.drawing_path_finished:
+
+            key_pressed = self.process_key_events()
+
+            if key_pressed:
+                self.board.drawing_path_finished = True
+                break
+
+            # Prevent lag
+            time.sleep(0.1)
+
 
     def _search_path_sync(self) -> None:
 

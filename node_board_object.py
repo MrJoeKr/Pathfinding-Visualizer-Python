@@ -22,6 +22,9 @@ class NodeBoard:
         self.path: PathList = []
         self.finding_path_finished = False
 
+        # For threading purposes
+        self.drawing_path_finished = False
+
     def _init_board(self) -> List[List[Node]]:
         out = []
         for y in range(self.rows):
@@ -58,6 +61,7 @@ class NodeBoard:
     def clear_solution(self) -> None:
         self.path.clear()
         self.finding_path_finished = False
+        self.drawing_path_finished = False
 
         for row in self.board:
             for node in row:
@@ -120,6 +124,12 @@ class NodeBoard:
                 # node.set_color(node_color)
 
             time.sleep(SHOW_PATH_DELAY)
+
+            # If a thread requests end
+            if self.drawing_path_finished:
+                break
+
+        self.drawing_path_finished = True
 
     def solution_found(self) -> bool:
         return len(self.path) > 0
