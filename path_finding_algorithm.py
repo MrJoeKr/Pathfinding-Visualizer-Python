@@ -26,8 +26,15 @@ BLACK = 2
 def manhattan_distance(node_a: Node, node_b: Node) -> int:
     return abs(node_a.x - node_b.x) + abs(node_a.y - node_b.y)
 
-def euclidian_distance(node_a: Node, node_b: Node) -> int:
+def euclidian_distance(node_a: Node, node_b: Node) -> float:
     return math.sqrt((node_a.x - node_b.x)**2 + (node_a.y - node_b.y)**2)
+
+# Return different bits of x and y coordinates
+def hamming_distance(a: Node, b: Node) -> int:
+    return different_bits_count(a.x, b.x) + different_bits_count(a.y, b.y)
+
+def different_bits_count(n: int, m: int) -> int:
+    return str(bin(n ^ m)).count("1")
 
 # Find path from start to end node using A* star
 def search_a_star(
@@ -253,7 +260,8 @@ _PATH_ALGORITHMS: List[Tuple[str, SearchFunction]] = \
 _HEURISTICS: List[Tuple[str, HeuristicFunction]] = \
     [
         ("Euclidian Distance", euclidian_distance),
-        ("Manhattan Distance", manhattan_distance)
+        ("Manhattan Distance", manhattan_distance),
+        ("Hamming Distance", hamming_distance),
     ]
 
 
