@@ -11,12 +11,11 @@ from config_constants import *
 pygame.init()
 
 DISPLAY = pygame.display.set_mode((DISPLAY_WIDTH, DISPLAY_HEIGTH))
-pygame.display.set_caption('A* path finder')
+pygame.display.set_caption("A* path finder")
 MAINCLOCK = pygame.time.Clock()
 
 
 class Application:
-
     def __init__(self):
         self.display = DISPLAY
 
@@ -33,14 +32,13 @@ class Application:
         self._run_menu_window()
         self._run_board_window()
 
-
     def _run_menu_window(self):
 
         self._menu_window.draw_window()
         self._menu_window.running = True
 
         while self._menu_window.running:
-            
+
             self._menu_window.process_mouse_events()
             self._menu_window.process_key_events()
 

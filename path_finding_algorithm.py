@@ -1,4 +1,5 @@
 from typing import Callable, List, Optional, Tuple, Deque
+
 # Priority queue
 from heapq import heappop, heappush
 from collections import deque
@@ -23,24 +24,28 @@ WHITE = DEFAULT_FLAG_VALUE
 GRAY = 1
 BLACK = 2
 
+
 def manhattan_distance(a: Node, b: Node) -> int:
     return abs(a.x - b.x) + abs(a.y - b.y)
 
+
 def euclidian_distance(node_a: Node, node_b: Node) -> float:
-    return math.sqrt((node_a.x - node_b.x)**2 + (node_a.y - node_b.y)**2)
+    return math.sqrt((node_a.x - node_b.x) ** 2 + (node_a.y - node_b.y) ** 2)
+
 
 # Return different bits of x and y coordinates
 def hamming_distance(a: Node, b: Node) -> int:
     return different_bits_count(a.x, b.x) + different_bits_count(a.y, b.y)
 
+
 def different_bits_count(n: int, m: int) -> int:
     return str(bin(n ^ m)).count("1")
 
+
 # Find path from start to end node using A* star
 def search_a_star(
-        board: NodeBoard,
-        draw_queue: Optional[DrawDeque],
-        heuristic: HeuristicFunction) -> None:
+    board: NodeBoard, draw_queue: Optional[DrawDeque], heuristic: HeuristicFunction
+) -> None:
 
     # Depth is variable that ensures if f-values are same,
     # nodes in bigger depth (smaller value) are traversed first
@@ -48,7 +53,9 @@ def search_a_star(
 
     # Init priority queue
     # (node.f, depth, node.y, node.x)
-    heap: List[Tuple[int, int, int]] = [(0, depth, board.start_node.y, board.start_node.x)]
+    heap: List[Tuple[int, int, int]] = [
+        (0, depth, board.start_node.y, board.start_node.x)
+    ]
     board.start_node.g = 0
 
     while heap:
@@ -60,7 +67,7 @@ def search_a_star(
         depth -= 1
 
         node = board.get_node(node_y, node_x)
-        
+
         # Best node so far
         if draw_queue is not None:
             draw_queue.append((CLOSED_NODES_COLOR, node))
@@ -69,10 +76,9 @@ def search_a_star(
             board.process_path_list()
             return
 
-        child_nodes: List[Node] = \
-            board.get_node_neighbours(
-                node, 
-                predicate=lambda child: child.g > node.g + 1 and not child.is_wall())
+        child_nodes: List[Node] = board.get_node_neighbours(
+            node, predicate=lambda child: child.g > node.g + 1 and not child.is_wall()
+        )
 
         # Valid nodes
         for child_node in child_nodes:
@@ -91,26 +97,26 @@ def search_a_star(
     # No path found
     return
 
+
 # Search using DFS method
 def search_dfs(
-        board: NodeBoard,
-        draw_queue: Optional[DrawDeque],
-        _: HeuristicFunction) -> None:
+    board: NodeBoard, draw_queue: Optional[DrawDeque], _: HeuristicFunction
+) -> None:
 
     _dfs_stack(board, draw_queue)
 
 
-def _dfs_stack(
-    board: NodeBoard,
-    draw_queue: Optional[DrawDeque]) -> None:
-    
+def _dfs_stack(board: NodeBoard, draw_queue: Optional[DrawDeque]) -> None:
+
     # Help lambda function
-    get_children = \
-        lambda node: board.get_node_neighbours(node, lambda child: not child.is_wall())
+    get_children = lambda node: board.get_node_neighbours(
+        node, lambda child: not child.is_wall()
+    )
 
     # [(node, children left)]
-    stack: List[Tuple[Node, List[Node]]] = \
-        [(board.start_node, get_children(board.start_node))]
+    stack: List[Tuple[Node, List[Node]]] = [
+        (board.start_node, get_children(board.start_node))
+    ]
 
     while stack:
 
@@ -131,7 +137,7 @@ def _dfs_stack(
                 draw_queue.append((CLOSED_NODES_COLOR, node))
 
             continue
-        
+
         if draw_queue is not None:
             draw_queue.append((OPEN_NODES_COLOR, node))
 
@@ -146,11 +152,9 @@ def _dfs_stack(
                 stack.append((child, get_children(child)))
                 break
 
+
 # Recursive method -> not used (exceeds default recursion limit)
-def _dfs_help(
-    node: Node,
-    board: NodeBoard,
-    draw_queue: Optional[DrawDeque]) -> bool:
+def _dfs_help(node: Node, board: NodeBoard, draw_queue: Optional[DrawDeque]) -> bool:
 
     if node is board.end_node:
         board.process_path_list()
@@ -176,16 +180,16 @@ def _dfs_help(
     if draw_queue is not None:
         draw_queue.append((CLOSED_NODES_COLOR, node))
 
-
     return False
 
 
 # Search using BFS method
 def search_bfs(
-        board: NodeBoard,
-        draw_queue: Optional[DrawDeque],
-        # Heuristic not used
-        _: HeuristicFunction) -> None:
+    board: NodeBoard,
+    draw_queue: Optional[DrawDeque],
+    # Heuristic not used
+    _: HeuristicFunction,
+) -> None:
 
     queue: Deque[Node] = deque()
 
@@ -203,11 +207,9 @@ def search_bfs(
         if draw_queue is not None:
             draw_queue.append((CLOSED_NODES_COLOR, node))
 
-        child_nodes = \
-            board.get_node_neighbours(
-                node,
-                lambda child: not child.visited and not child.is_wall()
-            ) 
+        child_nodes = board.get_node_neighbours(
+            node, lambda child: not child.visited and not child.is_wall()
+        )
 
         for child_node in child_nodes:
 
@@ -220,19 +222,17 @@ def search_bfs(
                 draw_queue.append((OPEN_NODES_COLOR, child_node))
 
 
-_PATH_ALGORITHMS: List[Tuple[str, SearchFunction]] = \
-    [
-        ("A Star Search", search_a_star),
-        ("Breadth First Search", search_bfs),
-        ("Depth First Search", search_dfs),
-    ]
+_PATH_ALGORITHMS: List[Tuple[str, SearchFunction]] = [
+    ("A Star Search", search_a_star),
+    ("Breadth First Search", search_bfs),
+    ("Depth First Search", search_dfs),
+]
 
-_HEURISTICS: List[Tuple[str, HeuristicFunction]] = \
-    [
-        ("Manhattan Distance", manhattan_distance),
-        ("Euclidian Distance", euclidian_distance),
-        ("Hamming Distance", hamming_distance),
-    ]
+_HEURISTICS: List[Tuple[str, HeuristicFunction]] = [
+    ("Manhattan Distance", manhattan_distance),
+    ("Euclidian Distance", euclidian_distance),
+    ("Hamming Distance", hamming_distance),
+]
 
 
 def get_algorithms_list() -> List[Tuple[str, SearchFunction]]:

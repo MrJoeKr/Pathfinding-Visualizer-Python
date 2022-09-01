@@ -20,13 +20,14 @@ _TICK_BOX_CLICK_DELAY = 0.1
 
 
 class BoardWindow:
-
     def __init__(
-            self, display: pygame.Surface, 
-            rows: int, 
-            cols: int, 
-            search_func: path_finding_algorithm.SearchFunction=path_finding_algorithm.search_a_star, 
-            heuristic_func:path_finding_algorithm.HeuristicFunction=path_finding_algorithm.euclidian_distance):
+        self,
+        display: pygame.Surface,
+        rows: int,
+        cols: int,
+        search_func: path_finding_algorithm.SearchFunction = path_finding_algorithm.search_a_star,
+        heuristic_func: path_finding_algorithm.HeuristicFunction = path_finding_algorithm.euclidian_distance,
+    ):
 
         self.display = display
 
@@ -37,15 +38,21 @@ class BoardWindow:
 
         # Text panel
         self.text_panel = TextPanel(
-            display, 0, DISPLAY_HEIGTH - BOTTOM_PANEL_HEIGHT, BOTTOM_PANEL_WIDTH,
-            BOTTOM_PANEL_HEIGHT, color_constants.BLACK)
+            display,
+            0,
+            DISPLAY_HEIGTH - BOTTOM_PANEL_HEIGHT,
+            BOTTOM_PANEL_WIDTH,
+            BOTTOM_PANEL_HEIGHT,
+            color_constants.BLACK,
+        )
 
         # Initialize tick box
         self.tick_box: TickBox = TickBox(
             display,
             DISPLAY_WIDTH - TICK_BOX_WIDTH - DISPLAY_WIDTH / 30,
             DISPLAY_HEIGTH - BOTTOM_PANEL_HEIGHT + 5,
-            TICK_BOX_WIDTH)
+            TICK_BOX_WIDTH,
+        )
 
         # Used for tick box threading to wait between clicks
         self._tick_box_executed: bool = False
@@ -73,11 +80,11 @@ class BoardWindow:
     def update_pathfinding_funcs(
         self,
         search: path_finding_algorithm.SearchFunction,
-        heuristic: path_finding_algorithm.HeuristicFunction) -> None:
+        heuristic: path_finding_algorithm.HeuristicFunction,
+    ) -> None:
 
         self.path_algorithm = search
         self.heuristic = heuristic
-
 
     def get_node_board(self) -> NodeBoard:
         return self.board
@@ -109,7 +116,12 @@ class BoardWindow:
                     self._update_text()
 
                 # Draw walls
-                elif board.end_node is not None and node != board.end_node and node != board.start_node and not node.is_wall():
+                elif (
+                    board.end_node is not None
+                    and node != board.end_node
+                    and node != board.start_node
+                    and not node.is_wall()
+                ):
                     node.set_wall()
 
         # Delete walls
@@ -132,8 +144,11 @@ class BoardWindow:
                 node.clear_node()
 
         # Tick box collision
-        if left_pressed and self.tick_box.is_mouse_collision(
-                mx, my) and not self._tick_box_executed:
+        if (
+            left_pressed
+            and self.tick_box.is_mouse_collision(mx, my)
+            and not self._tick_box_executed
+        ):
 
             self.tick_box.tick_untick_box()
             self._tick_box_executed = True
@@ -141,26 +156,42 @@ class BoardWindow:
 
     # Update text when some progress happened
     def _update_text(self) -> None:
-        
+
         self.text_panel.clear_panel()
         text_margin_left = 5
 
         if self.board.start_node is None:
-            self.text_panel.write_text(0 + text_margin_left, 0, "Choose start point", START_POINT_COLOR)
-        
+            self.text_panel.write_text(
+                0 + text_margin_left, 0, "Choose start point", START_POINT_COLOR
+            )
+
         elif self.board.end_node is None:
-            self.text_panel.write_text(0 + text_margin_left, 0, "Choose end point", END_POINT_COLOR)
-        
+            self.text_panel.write_text(
+                0 + text_margin_left, 0, "Choose end point", END_POINT_COLOR
+            )
+
         elif self.board.end_node is not None and not self.board.finding_path_finished:
-            self.text_panel.write_text(0 + text_margin_left, 0, "Draw walls or press SPACE to start", color_constants.WHITE)
+            self.text_panel.write_text(
+                0 + text_margin_left,
+                0,
+                "Draw walls or press SPACE to start",
+                color_constants.WHITE,
+            )
 
         elif self.board.finding_path_finished and self.board.solution_found():
             length = len(self.board.path) - 1
             plural = "s" if length > 1 else ""
-            self.text_panel.write_text(0 + text_margin_left, 0, f"Solution found! Path is {length} node{plural} long", START_POINT_COLOR)
+            self.text_panel.write_text(
+                0 + text_margin_left,
+                0,
+                f"Solution found! Path is {length} node{plural} long",
+                START_POINT_COLOR,
+            )
 
         elif self.board.finding_path_finished and not self.board.solution_found():
-            self.text_panel.write_text(0 + text_margin_left, 0, "No path was found", END_POINT_COLOR)
+            self.text_panel.write_text(
+                0 + text_margin_left, 0, "No path was found", END_POINT_COLOR
+            )
 
     def _get_node_from_mouse_coords(self, mx: int, my: int) -> Optional[Node]:
 
@@ -202,7 +233,7 @@ class BoardWindow:
 
                 # Start the algorithm (can be started more than once)
                 elif self.board.end_node is not None and event.key == pygame.K_SPACE:
-                    
+
                     if not self._visualizing_started:
                         self._visualizing_started = True
                         self._process_pathfinding()
@@ -210,7 +241,6 @@ class BoardWindow:
                     return True
 
         return False
-
 
     def _process_pathfinding(self):
 
@@ -228,20 +258,21 @@ class BoardWindow:
         path_finder = PathFinder(
             search_func=self.path_algorithm,
             heuristic=self.heuristic,
-            show_steps=show_steps)
+            show_steps=show_steps,
+        )
 
         threading.Thread(target=path_finder.start_search, args=(self.board,)).start()
 
         skip_path = False
         while not path_finder.finding_path_finished:
-            
+
             key_pressed = self.process_key_events()
 
             if key_pressed:
                 path_finder.stop_visualizing()
                 skip_path = True
                 break
-            
+
             # To prevent lagging
             time.sleep(0.1)
 
@@ -257,7 +288,8 @@ class BoardWindow:
         path_finder = PathFinder(
             search_func=self.path_algorithm,
             heuristic=self.heuristic,
-            show_steps=show_steps)
+            show_steps=show_steps,
+        )
 
         path_finder.start_search(self.board)
 

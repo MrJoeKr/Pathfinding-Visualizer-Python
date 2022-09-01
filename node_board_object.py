@@ -7,8 +7,8 @@ from node_object import Node
 
 PathList = List[Node]
 
-class NodeBoard:
 
+class NodeBoard:
     def __init__(self, display: pygame.Surface, rows: int, cols: int) -> None:
         self.rows = rows
         self.cols = cols
@@ -30,13 +30,13 @@ class NodeBoard:
             for x in range(self.cols):
                 node = Node(self.display, parent=None, position=(x, y))
                 sub.append(node)
-        
+
         return out
 
     def draw_board(self) -> None:
         for row in self.board:
             for node in row:
-                
+
                 node.draw_node(NODE_COLOR)
 
                 if node is self.start_node:
@@ -81,20 +81,21 @@ class NodeBoard:
     # Get all node neighbours (including walls)
     # Predicate can be used to select specific node neigbours
     # If predicate is True, node is selected
-    def get_node_neighbours(self, node: Node, predicate: Callable[[Node], bool]=lambda _: True) -> List[Node]:
+    def get_node_neighbours(
+        self, node: Node, predicate: Callable[[Node], bool] = lambda _: True
+    ) -> List[Node]:
 
         out = []
 
         for add_x, add_y in MOVES:
-            
+
             x = node.x + add_x
-            y = node.y + add_y 
+            y = node.y + add_y
 
             # Invalid position
-            if x < 0 or x >= self.cols \
-                    or y < 0 or y >= self.rows:
+            if x < 0 or x >= self.cols or y < 0 or y >= self.rows:
                 continue
-            
+
             child = self.get_node(y, x)
 
             if predicate(child):
