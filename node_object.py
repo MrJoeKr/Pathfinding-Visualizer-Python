@@ -48,6 +48,10 @@ class Node():
         # check equality with another node
         return self.position == other.position
 
+    # For debugging purposes
+    def __repr__(self) -> str:
+        return f"Node(x={self.x}, y={self.y})"
+
     def clear_flags(self) -> None:
         self.g = math.inf
         self.flag = 0
