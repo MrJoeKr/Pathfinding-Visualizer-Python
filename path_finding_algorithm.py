@@ -52,7 +52,7 @@ def search_a_star(
             draw_queue.append((CLOSED_NODES_COLOR, node))
 
         if node == board.end_node:
-            get_path_list(board.path, node)
+            board.process_path_list()
             return
 
         child_nodes: List[Node] = \
@@ -81,21 +81,63 @@ def search_dfs(
         draw_queue: Optional[DrawDeque],
         _: HeuristicFunction) -> None:
 
-    _dfs_help(board.start_node, board, draw_queue)
+    _dfs_stack(board, draw_queue)
 
-# TODO - to be removed
-import sys
-import config_constants
-LIMIT = config_constants.ROWS * config_constants.COLS + 1
-sys.setrecursionlimit(LIMIT)
 
+def _dfs_stack(
+    board: NodeBoard,
+    draw_queue: Optional[DrawDeque]) -> None:
+    
+    # Help lambda function
+    get_children = \
+        lambda node: board.get_node_neighbours(node, lambda child: not child.is_wall())
+
+    # [(node, children left)]
+    stack: List[Tuple[Node, List[Node]]] = \
+        [(board.start_node, get_children(board.start_node))]
+
+    while stack:
+
+        node, children_left = stack[-1]
+
+        if node is board.end_node:
+            board.process_path_list()
+            return
+
+        node.flag = GRAY
+
+        # No children -> end node traversing
+        if not children_left:
+            node.flag = BLACK
+            stack.pop()
+
+            if draw_queue is not None:
+                draw_queue.append((CLOSED_NODES_COLOR, node))
+
+            continue
+        
+        if draw_queue is not None:
+            draw_queue.append((OPEN_NODES_COLOR, node))
+
+        # Traverse child
+        while children_left:
+
+            child = children_left.pop()
+
+            if child.flag == WHITE and not child.is_wall():
+
+                child.parent = node
+                stack.append((child, get_children(child)))
+                break
+
+# Recursive method -> not used (exceeds default recursion limit)
 def _dfs_help(
     node: Node,
     board: NodeBoard,
     draw_queue: Optional[DrawDeque]) -> bool:
 
     if node is board.end_node:
-        get_path_list(board.path, node)
+        board.process_path_list()
         return True
 
     node.flag = GRAY
@@ -139,7 +181,7 @@ def search_bfs(
         node = queue.popleft()
 
         if node is board.end_node:
-            get_path_list(board.path, node)
+            board.process_path_list()
             return
 
         if draw_queue is not None:
@@ -199,17 +241,6 @@ def search_path(
             time.sleep(SHOW_STEPS_DELAY)
 
     board.finding_path_finished = True
-
-
-def get_path_list(out_path_list: List[Node], end_node: Node) -> None:
-
-    node: Optional[Node] = end_node
-
-    while node is not None:
-        out_path_list.append(node)
-        node = node.parent
-
-    out_path_list.reverse()
 
 
 _PATH_ALGORITHMS: List[Tuple[str, SearchFunction]] = \

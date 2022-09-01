@@ -165,7 +165,7 @@ class BoardWindow:
         node: Optional[Node] = None
 
         if node_y < rows and node_x < cols:
-            node = self.board.board[node_y][node_x]
+            node = self.board.get_node(node_y, node_x)
 
         return node
 

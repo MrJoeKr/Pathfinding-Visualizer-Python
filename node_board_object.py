@@ -117,3 +117,12 @@ class NodeBoard:
 
     def solution_found(self) -> bool:
         return len(self.path) > 0
+
+    def process_path_list(self) -> None:
+        node: Optional[Node] = self.end_node
+
+        while node is not None:
+            self.path.append(node)
+            node = node.parent
+
+        self.path.reverse()
