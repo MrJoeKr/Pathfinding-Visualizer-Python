@@ -112,7 +112,6 @@ class NodeBoard:
                 node.draw_pop_up_animation(node_color)
                 # node.set_color(node_color)
 
-            pygame.display.update()
             time.sleep(SHOW_PATH_DELAY)
 
     def solution_found(self) -> bool:
