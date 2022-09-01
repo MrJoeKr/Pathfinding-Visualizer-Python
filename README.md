@@ -2,17 +2,18 @@
 Application which visualizes various pathfinding algorithms. Made in Python with the use of module [pygame](https://www.pygame.org/).
 
 # Setup
+- Firstly, see [requirements](#requirements). The program cannot be run without them
 - Start **``run.pyw``** file to run the program.
 - In the main menu, choose algorithm and heuristic (if heurestic is used)
 - Click **``Go To Board``** to start experimenting
 
 # Requirements:
-  - Python 3.x
+  - [Python 3.x](https://www.python.org/downloads/)
   - modules:
     - [pygame](https://www.pygame.org/)
 
 # How to visualize algorithm
-Click on the **tick-box** in the bottom-right corner to have algorithm visualized.
+Click on the **tick-box** in the bottom-right corner of board window to have algorithm visualized.
     
 # Controls
   - **LEFT MOUSE CLICK** for drawing start / end / wall node
@@ -25,4 +26,4 @@ Click on the **tick-box** in the bottom-right corner to have algorithm visualize
     
 ### Enjoy.
 
-- MrJoeKr
+- [MrJoeKr](https://github.com/MrJoeKr)
