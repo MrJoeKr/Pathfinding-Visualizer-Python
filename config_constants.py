@@ -5,7 +5,7 @@ DISPLAY_HEIGTH = 650
 
 FPS = 120
 
-# Nodes count
+# Nodes count ROWS * COLS
 ROWS = 40
 COLS = 53
 
