@@ -165,13 +165,17 @@ class Node:
 
         self.display_update()
 
-    def set_wall(self) -> None:
+    def set_wall(self, update_screen: bool=False) -> None:
         self._is_wall = True
-        self.draw_node()
 
-    def unset_wall(self) -> None:
+        if update_screen:
+            self.draw_node()
+
+    def unset_wall(self, update_screen: bool=False) -> None:
         self._is_wall = False
-        self.draw_node()
+
+        if update_screen:
+            self.draw_node()
 
     def clear_node(self) -> None:
         self.draw_node()

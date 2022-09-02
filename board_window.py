@@ -12,6 +12,8 @@ from path_finder import PathFinder
 import path_finding_algorithm
 from text_panel import TextPanel
 from tick_box import TickBox
+from maze_generator import MazeGenerator
+import maze_algorithms
 
 BOTTOM_PANEL_HEIGHT = 50
 BOTTOM_PANEL_WIDTH = DISPLAY_WIDTH - 100
@@ -240,7 +242,20 @@ class BoardWindow:
 
                     return True
 
+                # Generate maze
+                elif event.key == pygame.K_m:
+                    self._process_maze_generation()
+
         return False
+
+    def _process_maze_generation(self):
+        
+        if self.board.start_node is None or self.board.end_node is None:
+            self.board.set_default_start_end()
+
+        MazeGenerator(maze_algorithms.randomized_dfs).generate_maze(self.board)
+
+        # pygame.display.update()
 
     def _process_pathfinding(self):
 

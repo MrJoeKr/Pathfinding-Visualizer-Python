@@ -142,3 +142,14 @@ class NodeBoard:
             node = node.parent
 
         self.path.reverse()
+
+    # Map all nodes in board according to func
+    def map_nodes(self, func: Callable[[Node], None]) -> None:
+
+        for row in self.get_board():
+            for node in row:
+                func(node)
+
+    def set_default_start_end(self) -> None:
+        self.start_node = self.get_node(0, 0)
+        self.end_node = self.get_node(self.rows - 1, self.cols - 1)

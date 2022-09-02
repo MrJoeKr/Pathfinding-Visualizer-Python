@@ -34,6 +34,12 @@ Click on the **tick-box** in the bottom-right corner of board window to have alg
 
 # Design the board
 The board can be styled with the ``config_constants.py`` file. See the file and change node properties according to your desires.
+
+# Algorithms
+// TODO
+
+# Maze Generation
+// TODO
     
 ### Enjoy.
 
