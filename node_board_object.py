@@ -1,12 +1,15 @@
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, Tuple
 import pygame
 import time
+from color_constants import Color
 
 from config_constants import *
 from node_object import Node
 
 PathList = List[Node]
 
+# To prevent a lot of pygame display updates
+_NODE_DRAW_THRESHOLD = 8
 
 class NodeBoard:
     def __init__(self, display: pygame.Surface, rows: int, cols: int) -> None:
@@ -24,6 +27,8 @@ class NodeBoard:
 
         # For threading purposes
         self.drawing_path_finished = False
+
+        self._nodes_to_draw: List[Tuple[Color, Node, bool]] = []
 
     def _init_board(self) -> List[List[Node]]:
         out = []
@@ -106,6 +111,31 @@ class NodeBoard:
                 out.append(child)
 
         return out
+
+    # Draw node on the board if the threshold is reached
+    def draw_node(self, node: Node, color: Optional[Color]=None, as_cirle: bool=False) -> None:
+
+        if color is None:
+            # Default
+            color = NODE_COLOR
+
+        self._nodes_to_draw.append((color, node, as_cirle))
+
+        temp: List[pygame.Rect] = []
+
+        if len(self._nodes_to_draw) >= _NODE_DRAW_THRESHOLD:
+            
+            for color, node, as_cirle in self._nodes_to_draw:
+                if not as_cirle:
+                    node.draw_node(color, update_screen=False)
+                else:
+                    node.draw_as_circle(color, update_screen=False, background_color=None)
+
+                temp.append(node.get_rect())
+
+            pygame.display.update(temp)
+            self._nodes_to_draw.clear()
+
 
     def draw_path(self) -> None:
 

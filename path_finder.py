@@ -47,13 +47,14 @@ class PathFinder:
                 # TODO -> make pop up animation better
                 # node.draw_pop_up_animation(color)
 
-                node.draw_node(color)
-
                 if node is board.start_node:
-                    node.draw_as_circle(START_POINT_COLOR)
+                    board.draw_node(node, START_POINT_COLOR, as_cirle=True)
 
-                if node is board.end_node:
-                    node.draw_as_circle(END_POINT_COLOR)
+                elif node is board.end_node:
+                    board.draw_node(node, END_POINT_COLOR, as_cirle=False)
+
+                else:
+                    board.draw_node(node, color=color)
 
                 # Speed of drawing
                 time.sleep(SHOW_STEPS_DELAY)
