@@ -31,14 +31,14 @@ def randomized_dfs(board: NodeBoard, draw_queue: Optional[NodeQueue]) -> None:
         # Dfs through unvisited nodes
         _dfs_help(board, board.start_node, draw_queue)
         board.map_nodes(lambda node: _dfs_help(board, node, draw_queue))
-        
+
         maze_finished = PathFinder(show_steps=False).start_search(board)
 
         board.clear_solution(update_screen=False)
 
         if maze_finished:
             break
-        
+
         # Maze not found
         if draw_queue is not None:
             draw_queue.clear()
@@ -53,14 +53,15 @@ def randomized_dfs(board: NodeBoard, draw_queue: Optional[NodeQueue]) -> None:
     draw_queue.stop_visualizing()
 
 
-def _dfs_help(board: NodeBoard, start_node: Node, draw_queue: Optional[NodeQueue]) -> None:
+def _dfs_help(board: NodeBoard, start_node: Node,
+              draw_queue: Optional[NodeQueue]) -> None:
 
     if start_node.flag != WHITE:
         return
 
     # Help lambda function
     # get_children = lambda node: board.get_node_neighbours(node)
-    get_children = lambda node: _node_children_dfs(board, node)
+    def get_children(node): return _node_children_dfs(board, node)
 
     children_left = get_children(start_node)
 
@@ -110,11 +111,15 @@ def _dfs_help(board: NodeBoard, start_node: Node, draw_queue: Optional[NodeQueue
 
 
 def _node_children_dfs(board: NodeBoard, node: Node) -> List[Node]:
-    children: List[Node] = board.get_node_neighbours(node, lambda child: child.is_wall())
+    children: List[Node] = board.get_node_neighbours(
+        node, lambda child: child.is_wall())
     # children: List[Node] = board.get_node_neighbours(node)
 
     # Choose random children of count from interval <_CHILDREN_LOWER_BOUND, children_count>
-    out = random.sample(children, random.randint(min(_CHILDREN_LOWER_BOUND, len(children)), len(children)))
+    out = random.sample(
+        children, random.randint(
+            min(_CHILDREN_LOWER_BOUND, len(children)),
+            len(children)))
 
     for node in children:
         if node not in out:
@@ -125,8 +130,8 @@ def _node_children_dfs(board: NodeBoard, node: Node) -> List[Node]:
 
 def _make_path_to_end(board: NodeBoard) -> None:
 
-    get_children = \
-        lambda node: random.sample((children := board.get_node_neighbours(node)), len(children))
+    def get_children(node): return random.sample(
+        (children := board.get_node_neighbours(node)), len(children))
 
     # get_children = lambda node: board.get_node_neighbours(node)
 
