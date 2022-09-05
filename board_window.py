@@ -249,13 +249,9 @@ class BoardWindow:
         return False
 
     def _process_maze_generation(self):
-        
-        if self.board.start_node is None or self.board.end_node is None:
-            self.board.set_default_start_end()
+        show_steps = self.tick_box.is_ticked()
 
-        MazeGenerator(maze_algorithms.randomized_dfs).generate_maze(self.board)
-
-        # pygame.display.update()
+        MazeGenerator(maze_algorithms.randomized_dfs, show_steps=show_steps).generate_maze(self.board)
 
     def _process_pathfinding(self):
 
