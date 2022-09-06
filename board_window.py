@@ -251,7 +251,10 @@ class BoardWindow:
     def _process_maze_generation(self):
         show_steps = self.tick_box.is_ticked()
 
-        MazeGenerator(maze_algorithms.randomized_dfs, show_steps=show_steps).generate_maze(self.board)
+        # algorithm = maze_algorithms.randomized_dfs
+        algorithm = maze_algorithms.recursive_division
+
+        MazeGenerator(algorithm, show_steps=show_steps).generate_maze(self.board)
 
     def _process_pathfinding(self):
 

@@ -29,7 +29,6 @@ class NodeQueue:
         self._queue.append((OPEN_NODES_COLOR, node))
 
     def start_draw(self, draw_func: Optional[Callable[[Node, Color], None]] = None, do_while: Callable[[], bool] = lambda: True) -> None:
-        # time.sleep(1)
         while self.can_visualize() and do_while():
 
             if not self._queue:
@@ -38,6 +37,8 @@ class NodeQueue:
                 continue
 
             color, node = self.popleft()
+
+            # print(f"Drawing: {(color, node)}")
 
             # TODO -> make pop up animation better
             # node.draw_pop_up_animation(color)

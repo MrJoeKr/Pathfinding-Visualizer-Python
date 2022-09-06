@@ -1,5 +1,5 @@
 import time
-from typing import Callable, Deque, List, Optional, Tuple
+from typing import Callable, Deque, List, Optional, Set, Tuple
 from color_constants import Color
 from node_board_object import NodeBoard
 from node_draw_queue import NodeQueue
@@ -45,12 +45,7 @@ def randomized_dfs(board: NodeBoard, draw_queue: Optional[NodeQueue]) -> None:
             # Reset flags
             board.map_nodes(lambda node: node.clear_flags())
 
-    while not draw_queue.empty():
-        # Prevent lag
-        time.sleep(0.1)
-        continue
-
-    draw_queue.stop_visualizing()
+    _stop_queue_visualizing(draw_queue)
 
 
 def _dfs_help(board: NodeBoard, start_node: Node,
@@ -174,3 +169,118 @@ def _make_path_to_end(board: NodeBoard) -> None:
 
     # Reset flags
     board.map_nodes(lambda node: node.clear_flags())
+
+
+def _stop_queue_visualizing(draw_queue: Optional[NodeQueue]):
+    if draw_queue is None:
+        return
+
+    while not draw_queue.empty():
+        # Prevent lag
+        time.sleep(0.1)
+
+    draw_queue.stop_visualizing()
+
+
+def recursive_division(board: NodeBoard, draw_queue: Optional[NodeQueue]) -> None:
+
+    board.clear_walls()
+    board.update_screen()
+
+    _help_division(board, 0, board.cols - 1, 0, board.rows - 1, set(), draw_queue)
+
+    board.start_node.unset_wall(update_screen=True)
+    board.end_node.unset_wall(update_screen=True)
+
+    _stop_queue_visualizing(draw_queue)
+
+
+def _help_division(
+    board: NodeBoard, left: int, right: int, top: int, bottom: int, holes: Set[Tuple[int, int]], draw_queue: Optional[NodeQueue]) -> None:
+    
+    width = right - left + 1
+    height = bottom - top + 1
+
+    # print(top, left, width, height)
+
+    if width <= 2 or height <= 2:
+        return
+
+    # Add / subtract one so a new wall is not on the edge
+    x = random.randint(left + 1, right - 1)
+
+    # x is on a hole
+    # while (x, top - 1) in holes or (x, bottom + 1) in holes:
+    #     x = random.randint(left + 1, right - 1)
+
+    y = random.randint(top + 1, bottom - 1)
+    # while (left - 1, y) in holes or (right + 1, y) in holes:
+    #     y = random.randint(top + 1, bottom - 1)
+
+    # Four walls: left, right, top, bottom
+    walls: List[List[Node]] = [[] for _ in range(4)]
+
+    # print(f"(y, x): {(top, left)} ; height: {height} ; width: {width} ; point: {(y, x)}")
+
+    # Draw walls
+    for x_wall in range(left, right + 1):
+        # print(y, x_wall)
+        node = board.get_node(y, x_wall)
+        node.set_wall(update_screen=False)
+
+        # Don't add intersection
+        if x_wall < x:
+            walls[0].append(node)
+        elif x_wall > x:
+            walls[1].append(node)
+
+        if draw_queue is not None:
+            draw_queue.push(node, config_constants.WALL_COLOR)
+
+    for y_wall in range(top, bottom + 1):
+        node = board.get_node(y_wall, x)
+        node.set_wall(update_screen=False)
+
+        if y_wall < y:
+            walls[2].append(node)
+        elif y_wall > y:
+            walls[3].append(node)
+
+        if draw_queue is not None:
+            draw_queue.push(node, config_constants.WALL_COLOR)
+
+    no_holes = random.randrange(4)
+
+    # Make holes
+    for i, wall in enumerate(walls):
+        if i == no_holes:
+            continue
+
+        node = random.choice(wall)
+        node.unset_wall()
+
+        holes.add((node.x, node.y))
+
+        if draw_queue is not None:
+            draw_queue.push(node, config_constants.NODE_COLOR)
+
+    # # left_width = left + x
+    # left_width = x - left
+    # right_width = width - left_width - 1
+    # # left_width = width - right_width - 1
+    # # bottom_height = height - y
+    # bottom_height = y - top
+    # top_height = height - bottom_height - 1
+
+    # Top-left
+    _help_division(board, left, x - 1, top, y - 1, holes, draw_queue)
+    # Top-right
+    _help_division(board, x + 1, right, top, y - 1, holes, draw_queue)
+    # Bottom-right
+    _help_division(board, x + 1, right, y + 1, bottom, holes, draw_queue)
+    # Bottom-left
+    _help_division(board, left, x - 1, y + 1, bottom, holes, draw_queue)
+
+
+def _draw_walls(board: NodeBoard, top: int, left: int, width: int, height: int) -> None:
+    pass

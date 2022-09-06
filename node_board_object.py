@@ -162,3 +162,6 @@ class NodeBoard:
     def update_screen(self) -> None:
         to_update = [node.get_rect() for row in self.get_board() for node in row]
         pygame.display.update(to_update)
+
+    def clear_walls(self) -> None:
+        self.map_nodes(lambda node: node.unset_wall(update_screen=False))

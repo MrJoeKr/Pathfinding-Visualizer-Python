@@ -92,8 +92,9 @@ class Node:
                 WALL_COLOR,
                 pygame.Rect(draw_x, draw_y, self.width, self.width),
             )
-
-            self.display_update()
+            
+            if update_screen:
+                self.display_update()
 
             return
 
