@@ -98,18 +98,26 @@ def search_dijkstra(
     board: NodeBoard, draw_queue: Optional[NodeQueue], _: HeuristicFunction
 ) -> None:
 
-    search_dijkstra_help(board, draw_queue, lambda: 1)
+    search_dijkstra_help(board, draw_queue, lambda: 1, True)
 
 
 def bogo_search(
     board: NodeBoard, draw_queue: Optional[NodeQueue], _: HeuristicFunction
 ) -> None:
 
-    search_dijkstra_help(board, draw_queue, lambda: random.randrange(1, 10**6) * random.choice([-1, 1]))
+    upper_bound = 10**5
+    # upper_bound = 5
+
+    randomness = lambda: random.randrange(1, upper_bound) * random.choice([-1, 1])
+    # randomness = lambda: random.randrange(1, upper_bound)
+    # randomness = lambda: math.sin(random.randrange(1, upper_bound))
+    # randomness = lambda: math.sin(random.randrange(1, upper_bound)) * math.cos(random.randrange(1, upper_bound))
+
+    search_dijkstra_help(board, draw_queue, randomness, False)
 
 
 def search_dijkstra_help(
-    board: NodeBoard, draw_queue: Optional[NodeQueue], cost_to_next: Callable[[], int]
+    board: NodeBoard, draw_queue: Optional[NodeQueue], cost_to_next: Callable[[], int], add_to_cost: bool
 ) -> None:
 
     # (cost_so_far, x, y)
@@ -136,7 +144,7 @@ def search_dijkstra_help(
             child.visited = True
             child.parent = node
 
-            heappush(min_heap, (cost + cost_to_next(), child.x, child.y))
+            heappush(min_heap, ((cost if add_to_cost else 0) + cost_to_next(), child.x, child.y))
 
             _push_open_node(draw_queue, child)
 
