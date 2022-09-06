@@ -124,7 +124,7 @@ class BoardWindow:
                     and node != board.start_node
                     and not node.is_wall()
                 ):
-                    node.set_wall()
+                    node.set_wall(update_screen=True)
 
         # Delete walls
         if right_pressed:

@@ -210,12 +210,22 @@ def _help_division(
     x = random.randint(left + 1, right - 1)
 
     # x is on a hole
-    # while (x, top - 1) in holes or (x, bottom + 1) in holes:
-    #     x = random.randint(left + 1, right - 1)
+    x_on_hole = lambda x: (x, top - 1) in holes or (x, bottom + 1) in holes
+
+    if x_on_hole(x):
+        x = left + 1
+        while x < right - 1 and x_on_hole(x):
+            x += 1
 
     y = random.randint(top + 1, bottom - 1)
-    # while (left - 1, y) in holes or (right + 1, y) in holes:
-    #     y = random.randint(top + 1, bottom - 1)
+
+    # y in on a hole
+    y_on_hole = lambda y: (left - 1, y) in holes or (right + 1, y) in holes
+
+    if y_on_hole(y):
+        y = top + 1
+        while y < bottom - 1 and y_on_hole(y):
+            y += 1
 
     # Four walls: left, right, top, bottom
     walls: List[List[Node]] = [[] for _ in range(4)]
@@ -263,14 +273,6 @@ def _help_division(
 
         if draw_queue is not None:
             draw_queue.push(node, config_constants.NODE_COLOR)
-
-    # # left_width = left + x
-    # left_width = x - left
-    # right_width = width - left_width - 1
-    # # left_width = width - right_width - 1
-    # # bottom_height = height - y
-    # bottom_height = y - top
-    # top_height = height - bottom_height - 1
 
     # Top-left
     _help_division(board, left, x - 1, top, y - 1, holes, draw_queue)
