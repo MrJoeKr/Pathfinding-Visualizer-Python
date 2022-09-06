@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 import pygame
 import threading
 import time
@@ -244,15 +244,15 @@ class BoardWindow:
 
                 # Generate maze
                 elif event.key == pygame.K_m:
-                    self._process_maze_generation()
+                    self._process_maze_generation(maze_algorithms.recursive_division)
+
+                elif event.key == pygame.K_n:
+                    self._process_maze_generation(maze_algorithms.randomized_dfs)
 
         return False
 
-    def _process_maze_generation(self):
+    def _process_maze_generation(self, algorithm: maze_algorithms.MazeFunction):
         show_steps = self.tick_box.is_ticked()
-
-        # algorithm = maze_algorithms.randomized_dfs
-        algorithm = maze_algorithms.recursive_division
 
         MazeGenerator(algorithm, show_steps=show_steps).generate_maze(self.board)
 

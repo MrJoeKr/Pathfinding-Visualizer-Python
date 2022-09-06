@@ -26,7 +26,7 @@ def randomized_dfs(board: NodeBoard, draw_queue: Optional[NodeQueue]) -> None:
     while True:
 
         # Set all nodes to walls
-        board.map_nodes(lambda node: node.set_wall(update_screen=False))
+        board.map_nodes(lambda node: node.set_wall(update_screen=True))
 
         # Dfs through unvisited nodes
         _dfs_help(board, board.start_node, draw_queue)
@@ -46,6 +46,8 @@ def randomized_dfs(board: NodeBoard, draw_queue: Optional[NodeQueue]) -> None:
             board.map_nodes(lambda node: node.clear_flags())
 
     _stop_queue_visualizing(draw_queue)
+
+    board.end_node.unset_wall(update_screen=True)
 
 
 def _dfs_help(board: NodeBoard, start_node: Node,
@@ -101,8 +103,6 @@ def _dfs_help(board: NodeBoard, start_node: Node,
                 stack.append((child, child_children))
 
                 break
-
-    # board.end_node.unset_wall(update_screen=False)
 
 
 def _node_children_dfs(board: NodeBoard, node: Node) -> List[Node]:
@@ -182,12 +182,30 @@ def _stop_queue_visualizing(draw_queue: Optional[NodeQueue]):
     draw_queue.stop_visualizing()
 
 
-def recursive_division(board: NodeBoard, draw_queue: Optional[NodeQueue]) -> None:
+def recursive_division(
+        board: NodeBoard, draw_queue: Optional[NodeQueue]) -> None:
 
-    board.clear_walls()
-    board.update_screen()
+    while True:
 
-    _help_division(board, 0, board.cols - 1, 0, board.rows - 1, set(), draw_queue)
+        board.clear_walls()
+        board.update_screen()
+
+        _help_division(board, 0, board.cols - 1, 0,
+                       board.rows - 1, set(), draw_queue)
+
+        maze_finished = PathFinder(show_steps=False).start_search(board)
+
+        board.clear_solution(update_screen=False)
+
+        # board.start_node.unset_wall(update_screen=True)
+        # board.end_node.unset_wall(update_screen=True)
+
+        if maze_finished:
+            break
+
+        # Maze not found
+        if draw_queue is not None:
+            draw_queue.clear()
 
     board.start_node.unset_wall(update_screen=True)
     board.end_node.unset_wall(update_screen=True)
@@ -196,8 +214,10 @@ def recursive_division(board: NodeBoard, draw_queue: Optional[NodeQueue]) -> Non
 
 
 def _help_division(
-    board: NodeBoard, left: int, right: int, top: int, bottom: int, holes: Set[Tuple[int, int]], draw_queue: Optional[NodeQueue]) -> None:
-    
+        board: NodeBoard, left: int, right: int, top: int, bottom: int,
+        holes: Set[Tuple[int, int]],
+        draw_queue: Optional[NodeQueue]) -> None:
+
     width = right - left + 1
     height = bottom - top + 1
 
@@ -210,7 +230,7 @@ def _help_division(
     x = random.randint(left + 1, right - 1)
 
     # x is on a hole
-    x_on_hole = lambda x: (x, top - 1) in holes or (x, bottom + 1) in holes
+    def x_on_hole(x): return (x, top - 1) in holes or (x, bottom + 1) in holes
 
     if x_on_hole(x):
         x = left + 1
@@ -220,7 +240,7 @@ def _help_division(
     y = random.randint(top + 1, bottom - 1)
 
     # y is on a hole
-    y_on_hole = lambda y: (left - 1, y) in holes or (right + 1, y) in holes
+    def y_on_hole(y): return (left - 1, y) in holes or (right + 1, y) in holes
 
     if y_on_hole(y):
         y = top + 1
@@ -234,7 +254,8 @@ def _help_division(
         return
 
     # Four walls: left, right, top, bottom
-    walls: List[List[Node]] = _draw_walls(board, x, y, left, right, top, bottom, draw_queue)
+    walls: List[List[Node]] = _draw_walls(
+        board, x, y, left, right, top, bottom, draw_queue)
 
     no_holes = random.randrange(4)
 
@@ -262,8 +283,8 @@ def _help_division(
 
 
 def _draw_walls(
-    board: NodeBoard, x: int, y: int, left: int, right: int, top: int, bottom: int, draw_queue: Optional[NodeQueue]) -> List[List[Node]]:
-    
+        board: NodeBoard, x: int, y: int, left: int, right: int, top: int, bottom: int, draw_queue: Optional[NodeQueue]) -> List[List[Node]]:
+
     # Four walls: left, right, top, bottom
     walls: List[List[Node]] = [[] for _ in range(4)]
 
