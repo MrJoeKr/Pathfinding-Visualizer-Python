@@ -3,6 +3,7 @@ from typing import Callable, List, Optional, Tuple, Deque
 # Priority queue
 from heapq import heappop, heappush
 from collections import deque
+import random
 import math
 
 from library.node.board import NodeBoard
@@ -91,6 +92,53 @@ def search_a_star(
 
     # No path found
     return
+
+
+def search_dijkstra(
+    board: NodeBoard, draw_queue: Optional[NodeQueue], _: HeuristicFunction
+) -> None:
+
+    search_dijkstra_help(board, draw_queue, lambda: 1)
+
+
+def bogo_search(
+    board: NodeBoard, draw_queue: Optional[NodeQueue], _: HeuristicFunction
+) -> None:
+
+    search_dijkstra_help(board, draw_queue, lambda: random.randrange(1, 10**6))
+
+
+def search_dijkstra_help(
+    board: NodeBoard, draw_queue: Optional[NodeQueue], cost_to_next: Callable[[], int]
+) -> None:
+
+    # (cost_so_far, x, y)
+    min_heap: List[Tuple[int, int, int]] = [(0, board.start_node.x, board.start_node.y)]
+
+    board.start_node.visited = True
+
+    while min_heap:
+        
+        cost, x, y = heappop(min_heap)
+
+        node = board.get_node(y, x)
+
+        if node is board.end_node:
+            board.process_path_list()
+            return
+
+        _push_closed_node(draw_queue, node)
+
+        children = board.get_node_neighbours(node, lambda child: not child.is_wall() and not child.visited)
+
+        for child in children:
+            
+            child.visited = True
+            child.parent = node
+
+            heappush(min_heap, (cost + cost_to_next(), child.x, child.y))
+
+            _push_open_node(draw_queue, child)
 
 
 # Search using DFS method
@@ -217,10 +265,26 @@ def search_bfs(
                 draw_queue.push_open_node(child_node)
 
 
+def _push_open_node(draw_queue: Optional[NodeQueue], node: Node):
+    if draw_queue is None:
+        return
+
+    draw_queue.push_open_node(node)
+
+
+def _push_closed_node(draw_queue: Optional[NodeQueue], node: Node):
+    if draw_queue is None:
+        return
+
+    draw_queue.push_closed_node(node)
+
+
 _PATH_ALGORITHMS: List[Tuple[str, SearchFunction]] = [
     ("A Star Search", search_a_star),
+    ("Dijkstra's Algorithm", search_dijkstra),
     ("Breadth First Search", search_bfs),
     ("Depth First Search", search_dfs),
+    ("Bogo Search", bogo_search),
 ]
 
 _HEURISTICS: List[Tuple[str, HeuristicFunction]] = [
