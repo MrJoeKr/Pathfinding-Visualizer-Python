@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 import pygame
 import threading
 import time
@@ -12,6 +12,8 @@ from path_finder import PathFinder
 import path_finding_algorithm
 from text_panel import TextPanel
 from tick_box import TickBox
+from maze_generator import MazeGenerator
+import maze_algorithms
 
 BOTTOM_PANEL_HEIGHT = 50
 BOTTOM_PANEL_WIDTH = DISPLAY_WIDTH - 100
@@ -122,7 +124,7 @@ class BoardWindow:
                     and node != board.start_node
                     and not node.is_wall()
                 ):
-                    node.set_wall()
+                    node.set_wall(update_screen=True)
 
         # Delete walls
         if right_pressed:
@@ -240,7 +242,19 @@ class BoardWindow:
 
                     return True
 
+                # Generate maze
+                elif event.key == pygame.K_m:
+                    self._process_maze_generation(maze_algorithms.recursive_division)
+
+                elif event.key == pygame.K_n:
+                    self._process_maze_generation(maze_algorithms.randomized_dfs)
+
         return False
+
+    def _process_maze_generation(self, algorithm: maze_algorithms.MazeFunction):
+        show_steps = self.tick_box.is_ticked()
+
+        MazeGenerator(algorithm, show_steps=show_steps).generate_maze(self.board)
 
     def _process_pathfinding(self):
 

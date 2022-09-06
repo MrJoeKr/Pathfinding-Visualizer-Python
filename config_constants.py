@@ -23,6 +23,8 @@ MOVES = [
 
 # The delay needs to be bigger than the time of the path-finding algorithm
 SHOW_STEPS_DELAY = 0.001
+# Debugging purposes - very slow
+# SHOW_STEPS_DELAY = 0.07
 SHOW_PATH_DELAY = 0.005
 
 # Node properties

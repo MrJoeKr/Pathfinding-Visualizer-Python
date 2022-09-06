@@ -58,7 +58,7 @@ class NodeBoard:
         self.draw_board()
 
     # Resets node flags and removes found path
-    def clear_solution(self) -> None:
+    def clear_solution(self, update_screen: bool = True) -> None:
         self.path.clear()
         self.finding_path_finished = False
         self.drawing_path_finished = False
@@ -67,14 +67,15 @@ class NodeBoard:
             for node in row:
                 node.clear_flags()
 
-                if node is self.start_node:
-                    node.draw_start_node()
+                if update_screen:
+                    if node is self.start_node:
+                        node.draw_start_node()
 
-                elif node is self.end_node:
-                    node.draw_end_node()
+                    elif node is self.end_node:
+                        node.draw_end_node()
 
-                else:
-                    node.draw_node()
+                    else:
+                        node.draw_node()
 
     def get_board(self):
         return self.board
@@ -142,3 +143,25 @@ class NodeBoard:
             node = node.parent
 
         self.path.reverse()
+
+    # Map all nodes in board according to func
+    def map_nodes(self, func: Callable[[Node], None]) -> None:
+
+        for row in self.get_board():
+            for node in row:
+                func(node)
+
+    def set_default_start_end(self) -> None:
+        if self.start_node is None:
+            self.start_node = self.get_node(1, 1)
+        
+        if self.end_node is None:
+            self.end_node = self.get_node(self.rows - 2, self.cols - 2)
+
+    # Updates all nodes
+    def update_screen(self) -> None:
+        to_update = [node.get_rect() for row in self.get_board() for node in row]
+        pygame.display.update(to_update)
+
+    def clear_walls(self) -> None:
+        self.map_nodes(lambda node: node.unset_wall(update_screen=False))

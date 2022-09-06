@@ -70,13 +70,16 @@ class Node:
         self.parent = None
         self.visited = False
 
+    def set_flag(self, value: int) -> None:
+        self.flag = value
+
     def get_rect(self) -> pygame.Rect:
         return self._update_rect
 
     def display_update(self):
         pygame.display.update([self._update_rect])
 
-    def draw_node(self, color: Optional[Color] = None) -> None:
+    def draw_node(self, color: Optional[Color] = None, update_screen: bool = True) -> None:
         draw_x, draw_y = self.draw_position
 
         if color is None:
@@ -89,8 +92,9 @@ class Node:
                 WALL_COLOR,
                 pygame.Rect(draw_x, draw_y, self.width, self.width),
             )
-
-            self.display_update()
+            
+            if update_screen:
+                self.display_update()
 
             return
 
@@ -113,7 +117,8 @@ class Node:
             ),
         )
 
-        self.display_update()
+        if update_screen:
+            self.display_update()
 
     def draw_start_node(self) -> None:
 
@@ -165,13 +170,15 @@ class Node:
 
         self.display_update()
 
-    def set_wall(self) -> None:
+    def set_wall(self, update_screen: bool=False) -> None:
         self._is_wall = True
-        self.draw_node()
 
-    def unset_wall(self) -> None:
+        self.draw_node(update_screen=update_screen)
+
+    def unset_wall(self, update_screen: bool=False) -> None:
         self._is_wall = False
-        self.draw_node()
+
+        self.draw_node(update_screen=update_screen)
 
     def clear_node(self) -> None:
         self.draw_node()
@@ -179,14 +186,5 @@ class Node:
     def is_wall(self):
         return self._is_wall
 
-    # TO BE REMOVED FUNCTIONS
     def get_rect(self) -> pygame.Rect:
-        # x = self.position[1] * 18 + 5
-        # y = self.position[0] * 18 + 5
-        x, y = self.draw_position[0], self.draw_position[1]
-        return pygame.Rect(x, y, self.width, self.width)
-
-    def get_pos(self):
-        x = self.position[1] * 18 + 5
-        y = self.position[0] * 18 + 5
-        return (x, y)
+        return self._update_rect

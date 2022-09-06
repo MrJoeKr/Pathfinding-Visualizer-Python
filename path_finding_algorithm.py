@@ -8,6 +8,7 @@ import time
 import math
 
 from node_board_object import NodeBoard
+from node_draw_queue import NodeQueue
 from node_object import Node, DEFAULT_FLAG_VALUE
 from config_constants import OPEN_NODES_COLOR, CLOSED_NODES_COLOR, SHOW_STEPS_DELAY
 from config_constants import START_POINT_COLOR, END_POINT_COLOR
@@ -16,8 +17,7 @@ from color_constants import Color
 Board = List[List[Node]]
 HeuristicFunction = Callable[[Node, Node], float]
 PathList = List[Node]
-DrawDeque = Deque[Tuple[Color, Node]]
-SearchFunction = Callable[[NodeBoard, Optional[DrawDeque], HeuristicFunction], None]
+SearchFunction = Callable[[NodeBoard, Optional[NodeQueue], HeuristicFunction], None]
 
 # Flags for DFS
 WHITE = DEFAULT_FLAG_VALUE
@@ -44,7 +44,7 @@ def different_bits_count(n: int, m: int) -> int:
 
 # Find path from start to end node using A* star
 def search_a_star(
-    board: NodeBoard, draw_queue: Optional[DrawDeque], heuristic: HeuristicFunction
+    board: NodeBoard, draw_queue: Optional[NodeQueue], heuristic: HeuristicFunction
 ) -> None:
 
     # Depth is variable that ensures if f-values are same,
@@ -70,7 +70,7 @@ def search_a_star(
 
         # Best node so far
         if draw_queue is not None:
-            draw_queue.append((CLOSED_NODES_COLOR, node))
+            draw_queue.push_closed_node(node)
 
         if node == board.end_node:
             board.process_path_list()
@@ -92,7 +92,7 @@ def search_a_star(
             heappush(heap, (f, depth, child_node.y, child_node.x))
 
             if draw_queue is not None:
-                draw_queue.append((OPEN_NODES_COLOR, child_node))
+                draw_queue.push_open_node(child_node)
 
     # No path found
     return
@@ -100,13 +100,13 @@ def search_a_star(
 
 # Search using DFS method
 def search_dfs(
-    board: NodeBoard, draw_queue: Optional[DrawDeque], _: HeuristicFunction
+    board: NodeBoard, draw_queue: Optional[NodeQueue], _: HeuristicFunction
 ) -> None:
 
     _dfs_stack(board, draw_queue)
 
 
-def _dfs_stack(board: NodeBoard, draw_queue: Optional[DrawDeque]) -> None:
+def _dfs_stack(board: NodeBoard, draw_queue: Optional[NodeQueue]) -> None:
 
     # Help lambda function
     get_children = lambda node: board.get_node_neighbours(
@@ -134,12 +134,12 @@ def _dfs_stack(board: NodeBoard, draw_queue: Optional[DrawDeque]) -> None:
             stack.pop()
 
             if draw_queue is not None:
-                draw_queue.append((CLOSED_NODES_COLOR, node))
+                draw_queue.push_closed_node(node)
 
             continue
 
         if draw_queue is not None:
-            draw_queue.append((OPEN_NODES_COLOR, node))
+            draw_queue.push_open_node(node)
 
         # Traverse child
         while children_left:
@@ -154,7 +154,7 @@ def _dfs_stack(board: NodeBoard, draw_queue: Optional[DrawDeque]) -> None:
 
 
 # Recursive method -> not used (exceeds default recursion limit)
-def _dfs_help(node: Node, board: NodeBoard, draw_queue: Optional[DrawDeque]) -> bool:
+def _dfs_help(node: Node, board: NodeBoard, draw_queue: Optional[NodeQueue]) -> bool:
 
     if node is board.end_node:
         board.process_path_list()
@@ -163,7 +163,7 @@ def _dfs_help(node: Node, board: NodeBoard, draw_queue: Optional[DrawDeque]) -> 
     node.flag = GRAY
 
     if draw_queue is not None:
-        draw_queue.append((OPEN_NODES_COLOR, node))
+        draw_queue.push_open_node(node)
 
     for child in board.get_node_neighbours(node):
 
@@ -178,7 +178,7 @@ def _dfs_help(node: Node, board: NodeBoard, draw_queue: Optional[DrawDeque]) -> 
     node.flag = BLACK
 
     if draw_queue is not None:
-        draw_queue.append((CLOSED_NODES_COLOR, node))
+        draw_queue.push_closed_node(node)
 
     return False
 
@@ -186,7 +186,7 @@ def _dfs_help(node: Node, board: NodeBoard, draw_queue: Optional[DrawDeque]) -> 
 # Search using BFS method
 def search_bfs(
     board: NodeBoard,
-    draw_queue: Optional[DrawDeque],
+    draw_queue: Optional[NodeQueue],
     # Heuristic not used
     _: HeuristicFunction,
 ) -> None:
@@ -205,7 +205,7 @@ def search_bfs(
             return
 
         if draw_queue is not None:
-            draw_queue.append((CLOSED_NODES_COLOR, node))
+            draw_queue.push_closed_node(node)
 
         child_nodes = board.get_node_neighbours(
             node, lambda child: not child.visited and not child.is_wall()
@@ -219,7 +219,7 @@ def search_bfs(
             queue.append(child_node)
 
             if draw_queue is not None:
-                draw_queue.append((OPEN_NODES_COLOR, child_node))
+                draw_queue.push_open_node(child_node)
 
 
 _PATH_ALGORITHMS: List[Tuple[str, SearchFunction]] = [
