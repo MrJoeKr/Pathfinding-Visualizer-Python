@@ -3,10 +3,10 @@ import time
 import pygame
 import sys
 
-import color_constants
-from text_panel import TextPanel
-import path_finding_algorithm
-from config_constants import DISPLAY_WIDTH, DISPLAY_HEIGTH
+import library.constants.color as color
+from library.text_panel import TextPanel
+import library.pathfinding.algorithms as algorithms
+from library.constants.config import DISPLAY_WIDTH, DISPLAY_HEIGTH
 
 CENTER_WIDTH = DISPLAY_WIDTH / 2
 TITLE_HEIGHT = DISPLAY_HEIGTH / 6
@@ -38,7 +38,7 @@ class MenuWindow:
         self.heuristic_idx = 0
 
     def draw_window(self) -> None:
-        self.display.fill(color_constants.WHITE)
+        self.display.fill(color.WHITE)
 
         self._draw_title_text()
 
@@ -58,7 +58,7 @@ class MenuWindow:
 
     def _draw_heuristic_title_text(self) -> None:
         font = pygame.font.Font(None, 40)
-        text = font.render("Choose your heuristic", True, color_constants.BLACK)
+        text = font.render("Choose your heuristic", True, color.BLACK)
 
         algo_rect = text.get_rect(center=(DISPLAY_WIDTH / 2, HEURISTIC_TEXT_HEIGHT))
 
@@ -78,11 +78,11 @@ class MenuWindow:
 
         font = pygame.font.Font(None, 40)
         heuristic_text = font.render(
-            self.selected_heuristic_text, True, color_constants.WHITE
+            self.selected_heuristic_text, True, color.WHITE
         )
 
         # Clear text
-        pygame.draw.rect(self.display, color_constants.BLACK, self.heuristic_button)
+        pygame.draw.rect(self.display, color.BLACK, self.heuristic_button)
 
         self._draw_text_to_middle_of_rect(heuristic_text, self.heuristic_button)
 
@@ -93,7 +93,7 @@ class MenuWindow:
         border_radius: int = min(rect.width, rect.height) // 4
 
         pygame.draw.rect(
-            self.display, color_constants.BLACK, rect, border_radius=border_radius
+            self.display, color.BLACK, rect, border_radius=border_radius
         )
 
         # Draw arrow lines
@@ -108,7 +108,7 @@ class MenuWindow:
         y2 = rect.y + rect.height / 2
         y3 = rect.y + rect.height - (y1 - rect.y)
         points = [(x1, y1), (x2, y2), (x1, y3)]
-        pygame.draw.lines(self.display, color_constants.WHITE, False, points, width=4)
+        pygame.draw.lines(self.display, color.WHITE, False, points, width=4)
 
     def _init_heuristic_button(self) -> None:
 
@@ -117,7 +117,7 @@ class MenuWindow:
         self.heuristic_button = pygame.Rect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT)
         self.heuristic_button.center = (CENTER_WIDTH, HEURISTIC_BUTTON_HEIGHT)
 
-        self.heuristics = path_finding_algorithm.get_heuristics_list()
+        self.heuristics = algorithms.get_heuristics_list()
 
         arrow_padding = 20
         arrow_width = 40
@@ -142,7 +142,7 @@ class MenuWindow:
     def _draw_algo_title_text(self) -> None:
         algo_font = pygame.font.Font(None, 40)
         algo_text = algo_font.render(
-            "Choose your algorithm", True, color_constants.BLACK
+            "Choose your algorithm", True, color.BLACK
         )
 
         algo_rect = algo_text.get_rect(center=(DISPLAY_WIDTH / 2, ALGO_TEXT_HEIGHT))
@@ -156,7 +156,7 @@ class MenuWindow:
         self.algo_button = pygame.Rect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT)
         self.algo_button.center = (CENTER_WIDTH, ALGO_BUTTON_HEIGHT)
 
-        self.algorithms = path_finding_algorithm.get_algorithms_list()
+        self.algorithms = algorithms.get_algorithms_list()
 
         arrow_padding = 20
         arrow_width = 40
@@ -182,11 +182,11 @@ class MenuWindow:
         self.start_button_rect = pygame.Rect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT)
         self.start_button_rect.center = (CENTER_WIDTH, START_BUTTON_HEIGHT)
 
-        pygame.draw.rect(self.display, color_constants.BLACK, self.start_button_rect)
+        pygame.draw.rect(self.display, color.BLACK, self.start_button_rect)
 
         # Display text
         start_font = pygame.font.Font(None, 58)
-        start_text = start_font.render("Go To Board", True, color_constants.WHITE)
+        start_text = start_font.render("Go To Board", True, color.WHITE)
 
         self._draw_text_to_middle_of_rect(start_text, self.start_button_rect)
 
@@ -206,17 +206,17 @@ class MenuWindow:
     # Draw title text
     def _draw_title_text(self) -> None:
         title_font = pygame.font.Font(None, 80)
-        title_text = title_font.render("Path Visualizer", True, color_constants.BLACK)
+        title_text = title_font.render("Path Visualizer", True, color.BLACK)
         # Center the text
         up_padding = DISPLAY_HEIGTH / 8
         text_rect = title_text.get_rect(center=(DISPLAY_WIDTH / 2, TITLE_HEIGHT))
 
         self.display.blit(title_text, text_rect)
 
-    def get_algorithm(self) -> path_finding_algorithm.SearchFunction:
+    def get_algorithm(self) -> algorithms.SearchFunction:
         return self.selected_algo_func
 
-    def get_heuristic(self) -> path_finding_algorithm.HeuristicFunction:
+    def get_heuristic(self) -> algorithms.HeuristicFunction:
         return self.selected_heuristic_func
 
     def process_mouse_events(self) -> None:
@@ -255,11 +255,11 @@ class MenuWindow:
 
         algo_font = pygame.font.Font(None, 40)
         algo_text = algo_font.render(
-            self.selected_algo_text, True, color_constants.WHITE
+            self.selected_algo_text, True, color.WHITE
         )
 
         # Clear text
-        pygame.draw.rect(self.display, color_constants.BLACK, self.algo_button)
+        pygame.draw.rect(self.display, color.BLACK, self.algo_button)
 
         self._draw_text_to_middle_of_rect(algo_text, self.algo_button)
 

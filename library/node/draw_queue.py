@@ -2,10 +2,9 @@ from collections import deque
 import time
 from typing import Any, Callable, Deque, Optional, Tuple
 
-from color_constants import Color
-from config_constants import CLOSED_NODES_COLOR, END_POINT_COLOR, OPEN_NODES_COLOR, SHOW_STEPS_DELAY, START_POINT_COLOR
-from node_board_object import NodeBoard
-from node_object import Node
+from library.constants.color import Color
+from library.constants.config import CLOSED_NODES_COLOR, OPEN_NODES_COLOR, SHOW_STEPS_DELAY
+from library.node.node import Node
 
 DrawDeque = Deque[Tuple[Color, Node]]
 

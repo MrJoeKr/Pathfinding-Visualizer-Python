@@ -1,17 +1,10 @@
-import time
 import math
 from typing import Optional, Union
-import pygame
-from config_constants import (
-    NODE_SIZE,
-    NODE_BORDER_COLOR,
-    NODE_COLOR,
-    FOREGROUND_PADDING,
-    WALL_COLOR,
-    START_POINT_COLOR,
-    END_POINT_COLOR,
-)
 
+import pygame
+from library.constants.config import (END_POINT_COLOR, FOREGROUND_PADDING,
+                                      NODE_BORDER_COLOR, NODE_COLOR, NODE_SIZE,
+                                      START_POINT_COLOR, WALL_COLOR)
 
 Color = tuple[int, int, int]
 

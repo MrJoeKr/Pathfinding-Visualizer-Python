@@ -2,12 +2,12 @@ from collections import deque
 import threading
 import time
 from typing import Optional
-from color_constants import Color
-from config_constants import END_POINT_COLOR, SHOW_STEPS_DELAY, START_POINT_COLOR
-from node_board_object import NodeBoard
-from node_draw_queue import NodeQueue
-from node_object import Node
-from path_finding_algorithm import SearchFunction, HeuristicFunction, search_a_star, manhattan_distance
+from library.constants.color import Color
+from library.constants.config import END_POINT_COLOR, SHOW_STEPS_DELAY, START_POINT_COLOR
+from library.node.board import NodeBoard
+from library.node.draw_queue import NodeQueue
+from library.node.node import Node
+from library.pathfinding.algorithms import SearchFunction, HeuristicFunction, search_a_star, manhattan_distance
 
 
 class PathFinder:

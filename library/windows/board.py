@@ -4,16 +4,15 @@ import threading
 import time
 import sys
 
-from config_constants import *
-from color_constants import Color
-from node_board_object import NodeBoard
-from node_object import Node
-from path_finder import PathFinder
-import path_finding_algorithm
-from text_panel import TextPanel
-from tick_box import TickBox
-from maze_generator import MazeGenerator
-import maze_algorithms
+from library.constants.config import *
+from library.node.board import NodeBoard
+from library.node.node import Node
+from library.pathfinding.pathfinder import PathFinder
+import library.pathfinding.algorithms as path_algorithms
+from library.text_panel import TextPanel
+from library.tick_box import TickBox
+from library.maze.generator import MazeGenerator
+import library.maze.algorithms as maze_algorithms
 
 BOTTOM_PANEL_HEIGHT = 50
 BOTTOM_PANEL_WIDTH = DISPLAY_WIDTH - 100
@@ -27,8 +26,8 @@ class BoardWindow:
         display: pygame.Surface,
         rows: int,
         cols: int,
-        search_func: path_finding_algorithm.SearchFunction = path_finding_algorithm.search_a_star,
-        heuristic_func: path_finding_algorithm.HeuristicFunction = path_finding_algorithm.euclidian_distance,
+        search_func: path_algorithms.SearchFunction = path_algorithms.search_a_star,
+        heuristic_func: path_algorithms.HeuristicFunction = path_algorithms.euclidian_distance,
     ):
 
         self.display = display
@@ -45,7 +44,7 @@ class BoardWindow:
             DISPLAY_HEIGTH - BOTTOM_PANEL_HEIGHT,
             BOTTOM_PANEL_WIDTH,
             BOTTOM_PANEL_HEIGHT,
-            color_constants.BLACK,
+            color.BLACK,
         )
 
         # Initialize tick box
@@ -68,7 +67,7 @@ class BoardWindow:
         self._visualizing_started = False
 
     def draw_window(self) -> None:
-        self.display.fill(color_constants.BLACK)
+        self.display.fill(color.BLACK)
 
         self.board.draw_board()
 
@@ -81,8 +80,8 @@ class BoardWindow:
 
     def update_pathfinding_funcs(
         self,
-        search: path_finding_algorithm.SearchFunction,
-        heuristic: path_finding_algorithm.HeuristicFunction,
+        search: path_algorithms.SearchFunction,
+        heuristic: path_algorithms.HeuristicFunction,
     ) -> None:
 
         self.path_algorithm = search
@@ -177,7 +176,7 @@ class BoardWindow:
                 0 + text_margin_left,
                 0,
                 "Draw walls or press SPACE to start",
-                color_constants.WHITE,
+                color.WHITE,
             )
 
         elif self.board.finding_path_finished and self.board.solution_found():

@@ -1,10 +1,10 @@
 import pygame
-import color_constants
+import library.constants.color as color
 
 
 FOREGROUND_PADDING = 2
-BORDER_COLOR = color_constants.LIGHT_BLUE
-BACKGROUND_COLOR = color_constants.WHITE
+BORDER_COLOR = color.LIGHT_BLUE
+BACKGROUND_COLOR = color.WHITE
 CROSS_WIDTH = 3
 
 
@@ -74,7 +74,7 @@ class TickBox:
 
             pygame.draw.line(
                 self.display,
-                color_constants.GREEN,
+                color.GREEN,
                 start_pos,
                 end_pos,
                 width=CROSS_WIDTH,
@@ -92,7 +92,7 @@ class TickBox:
 
             pygame.draw.line(
                 self.display,
-                color_constants.GREEN,
+                color.GREEN,
                 start_pos,
                 end_pos,
                 width=CROSS_WIDTH,

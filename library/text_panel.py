@@ -1,6 +1,6 @@
 from typing import Optional
 import pygame
-from color_constants import Color
+from library.constants.color import Color
 
 
 class TextPanel:

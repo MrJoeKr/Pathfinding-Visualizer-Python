@@ -3,16 +3,11 @@ from typing import Callable, List, Optional, Tuple, Deque
 # Priority queue
 from heapq import heappop, heappush
 from collections import deque
-import threading
-import time
 import math
 
-from node_board_object import NodeBoard
-from node_draw_queue import NodeQueue
-from node_object import Node, DEFAULT_FLAG_VALUE
-from config_constants import OPEN_NODES_COLOR, CLOSED_NODES_COLOR, SHOW_STEPS_DELAY
-from config_constants import START_POINT_COLOR, END_POINT_COLOR
-from color_constants import Color
+from library.node.board import NodeBoard
+from library.node.draw_queue import NodeQueue
+from library.node.node import Node, DEFAULT_FLAG_VALUE
 
 Board = List[List[Node]]
 HeuristicFunction = Callable[[Node, Node], float]

@@ -1,11 +1,11 @@
 import pygame
 
 # Project files
-from board_window import BoardWindow
-from menu_window import MenuWindow
-import path_finding_algorithm as pfa
-from color_constants import *
-from config_constants import *
+from library.windows.board import BoardWindow
+from library.windows.menu import MenuWindow
+import library.pathfinding.algorithms as pfa
+from library.constants.color import *
+from library.constants.config import *
 
 # Initialize pygame
 pygame.init()

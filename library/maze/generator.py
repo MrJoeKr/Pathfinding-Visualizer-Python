@@ -1,7 +1,7 @@
 import threading
-from node_board_object import NodeBoard
-from maze_algorithms import MazeFunction
-from node_draw_queue import NodeQueue
+from library.node.board import NodeBoard
+from library.maze.algorithms import MazeFunction
+from library.node.draw_queue import NodeQueue
 
 
 class MazeGenerator:

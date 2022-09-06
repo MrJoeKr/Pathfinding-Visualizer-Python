@@ -1,14 +1,14 @@
 import time
 from typing import Callable, Deque, List, Optional, Set, Tuple
-from color_constants import Color
-from node_board_object import NodeBoard
-from node_draw_queue import NodeQueue
-from path_finder import PathFinder
+from library.constants.color import Color
+from library.node.board import NodeBoard
+from library.node.draw_queue import NodeQueue
+from library.pathfinding.pathfinder import PathFinder
 import random
 
-from node_object import Node, DEFAULT_FLAG_VALUE
-import color_constants
-import config_constants
+from library.node.node import Node, DEFAULT_FLAG_VALUE
+import library.constants.color as color
+import library.constants.config as config
 
 MazeFunction = Callable[[NodeBoard, NodeQueue], None]
 
@@ -72,7 +72,7 @@ def _dfs_help(board: NodeBoard, start_node: Node,
         node, children_left = stack[-1]
 
         if draw_queue is not None:
-            draw_queue.push(node, config_constants.NODE_COLOR)
+            draw_queue.push(node, config.NODE_COLOR)
 
         node.unset_wall(update_screen=False)
 
@@ -270,7 +270,7 @@ def _help_division(
         holes.add((node.x, node.y))
 
         if draw_queue is not None:
-            draw_queue.push(node, config_constants.NODE_COLOR)
+            draw_queue.push(node, config.NODE_COLOR)
 
     # Top-left
     _help_division(board, left, x - 1, top, y - 1, holes, draw_queue)
@@ -303,7 +303,7 @@ def _draw_walls(
             walls[1].append(node)
 
         if draw_queue is not None:
-            draw_queue.push(node, config_constants.WALL_COLOR)
+            draw_queue.push(node, config.WALL_COLOR)
 
     for y_wall in range(top, bottom + 1):
         node = board.get_node(y_wall, x)
@@ -315,6 +315,6 @@ def _draw_walls(
             walls[3].append(node)
 
         if draw_queue is not None:
-            draw_queue.push(node, config_constants.WALL_COLOR)
+            draw_queue.push(node, config.WALL_COLOR)
 
     return walls

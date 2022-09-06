@@ -2,8 +2,8 @@ from typing import Callable, List, Optional
 import pygame
 import time
 
-from config_constants import *
-from node_object import Node
+from library.constants.config import *
+from library.node.node import Node
 
 PathList = List[Node]
 
