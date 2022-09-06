@@ -219,7 +219,7 @@ def _help_division(
 
     y = random.randint(top + 1, bottom - 1)
 
-    # y in on a hole
+    # y is on a hole
     y_on_hole = lambda y: (left - 1, y) in holes or (right + 1, y) in holes
 
     if y_on_hole(y):
@@ -227,6 +227,43 @@ def _help_division(
         while y < bottom - 1 and y_on_hole(y):
             y += 1
 
+    # print(f"(y, x): {(top, left)} ; height: {height} ; width: {width} ; point: {(y, x)}")
+
+    # Chamber is too small
+    if x_on_hole(x) or y_on_hole(y):
+        return
+
+    # Four walls: left, right, top, bottom
+    walls: List[List[Node]] = _draw_walls(board, x, y, left, right, top, bottom, draw_queue)
+
+    no_holes = random.randrange(4)
+
+    # Make holes
+    for i, wall in enumerate(walls):
+        if i == no_holes:
+            continue
+
+        node = random.choice(wall)
+        node.unset_wall()
+
+        holes.add((node.x, node.y))
+
+        if draw_queue is not None:
+            draw_queue.push(node, config_constants.NODE_COLOR)
+
+    # Top-left
+    _help_division(board, left, x - 1, top, y - 1, holes, draw_queue)
+    # Top-right
+    _help_division(board, x + 1, right, top, y - 1, holes, draw_queue)
+    # Bottom-right
+    _help_division(board, x + 1, right, y + 1, bottom, holes, draw_queue)
+    # Bottom-left
+    _help_division(board, left, x - 1, y + 1, bottom, holes, draw_queue)
+
+
+def _draw_walls(
+    board: NodeBoard, x: int, y: int, left: int, right: int, top: int, bottom: int, draw_queue: Optional[NodeQueue]) -> List[List[Node]]:
+    
     # Four walls: left, right, top, bottom
     walls: List[List[Node]] = [[] for _ in range(4)]
 
@@ -259,30 +296,4 @@ def _help_division(
         if draw_queue is not None:
             draw_queue.push(node, config_constants.WALL_COLOR)
 
-    no_holes = random.randrange(4)
-
-    # Make holes
-    for i, wall in enumerate(walls):
-        if i == no_holes:
-            continue
-
-        node = random.choice(wall)
-        node.unset_wall()
-
-        holes.add((node.x, node.y))
-
-        if draw_queue is not None:
-            draw_queue.push(node, config_constants.NODE_COLOR)
-
-    # Top-left
-    _help_division(board, left, x - 1, top, y - 1, holes, draw_queue)
-    # Top-right
-    _help_division(board, x + 1, right, top, y - 1, holes, draw_queue)
-    # Bottom-right
-    _help_division(board, x + 1, right, y + 1, bottom, holes, draw_queue)
-    # Bottom-left
-    _help_division(board, left, x - 1, y + 1, bottom, holes, draw_queue)
-
-
-def _draw_walls(board: NodeBoard, top: int, left: int, width: int, height: int) -> None:
-    pass
+    return walls
