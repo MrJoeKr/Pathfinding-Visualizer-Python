@@ -105,7 +105,7 @@ def bogo_search(
     board: NodeBoard, draw_queue: Optional[NodeQueue], _: HeuristicFunction
 ) -> None:
 
-    search_dijkstra_help(board, draw_queue, lambda: random.randrange(1, 10**6))
+    search_dijkstra_help(board, draw_queue, lambda: random.randrange(1, 10**6) * random.choice([-1, 1]))
 
 
 def search_dijkstra_help(
