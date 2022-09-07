@@ -1,11 +1,13 @@
 # Path-visualizer-in-python
-Application which visualizes various pathfinding algorithms, including *A Star Search* or *Breadth First Search*. Made in Python with the use of module [pygame](https://www.pygame.org/).
+- Application which [visualizes](#how-to-visualize-algorithm--maze-generation) various pathfinding algorithms, including [*A Star Search*](#a-star-search), [*Depth First Search*](#depth-first-search) and others
+- Visualizes [maze generation](#maze-generation) as well
+- Made in Python with the use of module [pygame](https://www.pygame.org/).
 
 # Table of contents
 - [Setup](#setup)
 - [Requirements](#requirements)
 - [Controls](#controls)
-- [How to visualize algorithm](#how-to-visualize-algorithm)
+- [How to visualize algorithm / maze](#how-to-visualize-algorithm--maze-generation)
 - [Design the board](#design-the-board)
 - [Algorithms](#algorithms)
 - [Generate Mazes](#maze-generation)
@@ -33,7 +35,7 @@ Application which visualizes various pathfinding algorithms, including *A Star S
 
   
 # How to visualize algorithm / maze generation
-Click on the **tick-box** in the bottom-right corner of the board window to have algorithm or maze generation visualized.
+Click on the **tick-box** in the *bottom-right corner* of the *board window* to have algorithm or maze generation visualized.
 
 # Design the board
 The board can be styled with the ``config_constants.py`` file. See the file and change node properties according to your desires.
@@ -59,6 +61,10 @@ The board can be styled with the ``config_constants.py`` file. See the file and 
     - It's a variation of [Dijkstra's Algorithm](#dijkstras-algorithm), but randomly decides which node to visit first
 
 # Maze Generation
+See [controls](#controls) to know how to generate a maze.
+
+These are the algorithms for maze generation:
+
 - ### Randomized Depth First Search
     - Starts with all nodes as walls
     - Uses [Depth First Search](#depth-first-search), but in randomized order
@@ -69,7 +75,7 @@ The board can be styled with the ``config_constants.py`` file. See the file and 
     - Looks objectively cooler than [Randomized Depth First Search](#randomized-depth-first-search)
 
 # Heuristics
-Heuristics only work for [A Star Search](#a-star-search) and are used to make Dijsktra's algorithm effective and faster in average. These are the implemented ones:
+Heuristics only work for [A Star Search](#a-star-search) and are used to make [Dijsktra's algorithm](#dijkstras-algorithm) effective and faster in average. These are the implemented ones:
 
 - ### Manhattan Distance
     - According to [definition](https://xlinux.nist.gov/dads/HTML/manhattanDistance.html): 
@@ -85,9 +91,9 @@ Heuristics only work for [A Star Search](#a-star-search) and are used to make Di
 - ### Hamming Distance
     - According to [definition](https://xlinux.nist.gov/dads/HTML/HammingDistance.html): 
         - *The number of bits which differ between two binary strings. More formally, the distance between two strings A and B is ∑ | Ai - Bi |.*
-    - This heuristic is more effectively used in other problems
+    - This heuristic is more effectively used in other problems (e.g. in [Sliding Tiles](https://visualstudiomagazine.com/articles/2015/10/30/sliding-tiles-c-sharp-ai.aspx))
     - In this case, it calculates the total number of different bits between ``x`` and ``y`` coordinates
-    - Creates nice patterns ([see](#how-to-visualize-algorithm--maze-generation) by yourself)
+    - Creates nice patterns ([visualize](#how-to-visualize-algorithm--maze-generation) by yourself)
     - **Gurantees shortest path**
     
 ### Enjoy.
