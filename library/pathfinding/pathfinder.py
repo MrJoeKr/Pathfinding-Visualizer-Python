@@ -29,9 +29,11 @@ class PathFinder:
 
     def start_search(self, board: NodeBoard) -> bool:
         """
+        Brief
+        ---
         General function for finding path between two nodes in NodeBoard
 
-        Starts new thread when board.show_steps is True
+        Starts new thread when self.show_steps is True
 
         Parameters
         ---

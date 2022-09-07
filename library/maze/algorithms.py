@@ -175,7 +175,7 @@ def _stop_queue_visualizing(draw_queue: Optional[NodeQueue]):
     if draw_queue is None:
         return
 
-    while not draw_queue.empty():
+    while not draw_queue.empty() and draw_queue.can_visualize():
         # Prevent lag
         time.sleep(0.1)
 

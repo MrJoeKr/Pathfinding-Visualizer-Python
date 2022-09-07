@@ -10,6 +10,9 @@ class MazeGenerator:
         self.maze_func = maze_func
         self.show_steps = show_steps
 
+        # For threading purposes
+        self._can_visualize = True
+
     def generate_maze(self, board: NodeBoard) -> None:
 
         if board.start_node is None or board.end_node is None:
@@ -30,7 +33,7 @@ class MazeGenerator:
             threading.Thread(target=self.maze_func, args=(board, draw_queue)).start()
 
             # maze_func is responsible for stopping drawing
-            draw_queue.start_draw()
+            draw_queue.start_draw(do_while=self.can_visualize)
 
             # print("Drawing finished")
 
@@ -38,3 +41,9 @@ class MazeGenerator:
 
         board.start_node.draw_start_node()
         board.end_node.draw_end_node()
+
+    def can_visualize(self) -> bool:
+        return self._can_visualize
+
+    def stop_visualize(self) -> None:
+        self._can_visualize = False

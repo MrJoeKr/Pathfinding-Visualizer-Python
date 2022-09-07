@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Any, Callable, Iterable, Optional
 import pygame
 import threading
 import time
@@ -13,6 +13,7 @@ from library.text_panel import TextPanel
 from library.tick_box import TickBox
 from library.maze.generator import MazeGenerator
 import library.maze.algorithms as maze_algorithms
+
 
 BOTTOM_PANEL_HEIGHT = 50
 BOTTOM_PANEL_WIDTH = DISPLAY_WIDTH - 100
@@ -143,7 +144,7 @@ class BoardWindow:
                     node.unset_wall()
 
                 node.clear_node()
-
+            
         # Tick box collision
         if (
             left_pressed
@@ -154,6 +155,9 @@ class BoardWindow:
             self.tick_box.tick_untick_box()
             self._tick_box_executed = True
             self._wait_for_next_execution_thread()
+
+        return left_pressed or middle_pressed or right_pressed
+
 
     # Update text when some progress happened
     def _update_text(self) -> None:
@@ -253,7 +257,12 @@ class BoardWindow:
     def _process_maze_generation(self, algorithm: maze_algorithms.MazeFunction):
         show_steps = self.tick_box.is_ticked()
 
-        MazeGenerator(algorithm, show_steps=show_steps).generate_maze(self.board)
+        maze_gen = MazeGenerator(algorithm, show_steps=show_steps)
+
+        not_interrupted = self._start_function_async(maze_gen.generate_maze, args=(self.board,))
+
+        if not not_interrupted:
+            maze_gen.stop_visualize()
 
     def _process_pathfinding(self):
 
@@ -266,6 +275,7 @@ class BoardWindow:
         self._visualizing_started = False
 
     def _search_path_async(self) -> None:
+
         show_steps = self.tick_box.is_ticked()
 
         path_finder = PathFinder(
@@ -274,41 +284,54 @@ class BoardWindow:
             show_steps=show_steps,
         )
 
-        threading.Thread(target=path_finder.start_search, args=(self.board,)).start()
+        success = self._start_function_async(path_finder.start_search, args=(self.board,))
 
-        skip_path = False
-        while not path_finder.finding_path_finished:
+        if not success:
+            path_finder.stop_visualizing()
 
-            key_pressed = self.process_key_events()
-
-            if key_pressed:
-                path_finder.stop_visualizing()
-                skip_path = True
-                break
-
-            # To prevent lagging
-            time.sleep(0.1)
-
-        if not skip_path:
+        if success:
             # Show path length
             self._update_text()
 
             self._draw_path_async()
 
+
     def _draw_path_async(self) -> None:
 
-        threading.Thread(target=self.board.draw_path).start()
+        self._start_function_async(self.board.draw_path)
 
-        while not self.board.drawing_path_finished:
+        # To stop the draw_path thread
+        self.board.drawing_path_finished = True
+
+    
+    def _start_function_async(self, target: Callable[[Any], None], args: Iterable = []) -> bool:
+        """
+        Brief
+        ---
+        Starts function asynchronously and if key or mouse event occurs, it stops the function
+
+        Returns
+        ---
+        True if not stopped by key / mouse event else False
+        """
+
+        thread = threading.Thread(target=target, args=[a for a in args])
+        thread.start()
+
+        success = True
+        while thread.is_alive():
 
             key_pressed = self.process_key_events()
+            mouse_pressed = self.process_mouse_events()
 
-            if key_pressed:
-                self.board.drawing_path_finished = True
+            if key_pressed or mouse_pressed:
+                success = False
                 break
 
             # Prevent lag
             time.sleep(0.1)
+
+        return success
 
 
     def _search_path_sync(self) -> None:
