@@ -6,10 +6,12 @@ import sys
 import library.constants.color as color
 from library.text_panel import TextPanel
 import library.pathfinding.algorithms as algorithms
-from library.constants.config import DISPLAY_WIDTH, DISPLAY_HEIGTH
+import library.constants.config as config
 
-CENTER_WIDTH = DISPLAY_WIDTH / 2
-TITLE_HEIGHT = DISPLAY_HEIGTH / 6
+CENTER_WIDTH = config.DISPLAY_WIDTH / 2
+TITLE_HEIGHT = config.DISPLAY_HEIGTH / 6
+
+BACKGROUND_COLOR = color.WHITE
 
 ALGO_TEXT_HEIGHT = TITLE_HEIGHT + 90
 ALGO_BUTTON_HEIGHT = ALGO_TEXT_HEIGHT + 50
@@ -38,7 +40,7 @@ class MenuWindow:
         self.heuristic_idx = 0
 
     def draw_window(self) -> None:
-        self.display.fill(color.WHITE)
+        self.display.fill(BACKGROUND_COLOR)
 
         self._draw_title_text()
 
@@ -46,7 +48,7 @@ class MenuWindow:
 
         # Init algorithm selection variables
         self._update_algorithm_selection(self.algo_idx)
-
+        
         self._init_heuristic_button()
 
         # Init heuristic selection variables
@@ -60,7 +62,7 @@ class MenuWindow:
         font = pygame.font.Font(None, 40)
         text = font.render("Choose your heuristic", True, color.BLACK)
 
-        algo_rect = text.get_rect(center=(DISPLAY_WIDTH / 2, HEURISTIC_TEXT_HEIGHT))
+        algo_rect = text.get_rect(center=(config.DISPLAY_WIDTH / 2, HEURISTIC_TEXT_HEIGHT))
 
         self.display.blit(text, algo_rect)
 
@@ -72,6 +74,7 @@ class MenuWindow:
             self.heuristic_idx
         ]
 
+        
         self._draw_heuristic_button_text()
 
     def _draw_heuristic_button_text(self) -> None:
@@ -145,7 +148,7 @@ class MenuWindow:
             "Choose your algorithm", True, color.BLACK
         )
 
-        algo_rect = algo_text.get_rect(center=(DISPLAY_WIDTH / 2, ALGO_TEXT_HEIGHT))
+        algo_rect = algo_text.get_rect(center=(config.DISPLAY_WIDTH / 2, ALGO_TEXT_HEIGHT))
 
         self.display.blit(algo_text, algo_rect)
 
@@ -206,10 +209,10 @@ class MenuWindow:
     # Draw title text
     def _draw_title_text(self) -> None:
         title_font = pygame.font.Font(None, 80)
-        title_text = title_font.render("Path Visualizer", True, color.BLACK)
+        title_text = title_font.render("Pathfinding Visualizer", True, color.BLACK)
         # Center the text
-        up_padding = DISPLAY_HEIGTH / 8
-        text_rect = title_text.get_rect(center=(DISPLAY_WIDTH / 2, TITLE_HEIGHT))
+        up_padding = config.DISPLAY_HEIGTH / 8
+        text_rect = title_text.get_rect(center=(config.DISPLAY_WIDTH / 2, TITLE_HEIGHT))
 
         self.display.blit(title_text, text_rect)
 
@@ -265,6 +268,14 @@ class MenuWindow:
 
         pygame.display.update(self.algo_button)
 
+    def _hide_heuristic_button(self) -> None:
+        pygame.draw.rect(self.display, BACKGROUND_COLOR, self.heuristic_button)
+        pygame.draw.rect(self.display, BACKGROUND_COLOR, self.left_heuristic_arrow)
+        pygame.draw.rect(self.display, BACKGROUND_COLOR, self.right_heuristic_arrow)
+
+        pygame.display.update([self.heuristic_button, self.left_heuristic_arrow, self.right_heuristic_arrow])
+
+
     def _process_left_right_arrow_buttons(self, mx: int, my: int) -> None:
 
         if self.left_algo_arrow.collidepoint(mx, my):
@@ -272,6 +283,12 @@ class MenuWindow:
 
         if self.right_algo_arrow.collidepoint(mx, my):
             self._update_algorithm_selection(self.algo_idx + 1)
+
+        # # Heuristics only for A Star Search
+        # if self.selected_algo_text != "A Star Search":
+        #     self._hide_heuristic_button()
+        # else:
+        #     pass
 
         if self.left_heuristic_arrow.collidepoint(mx, my):
             self._update_heuristic_selection(self.heuristic_idx - 1)

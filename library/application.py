@@ -3,15 +3,14 @@ import pygame
 # Project files
 from library.windows.board import BoardWindow
 from library.windows.menu import MenuWindow
-import library.pathfinding.algorithms as pfa
-from library.constants.color import *
-from library.constants.config import *
+import library.pathfinding.algorithms as path_algorithms
+import library.constants.config as config
 
 # Initialize pygame
 pygame.init()
 
-DISPLAY = pygame.display.set_mode((DISPLAY_WIDTH, DISPLAY_HEIGTH))
-pygame.display.set_caption("A* path finder")
+DISPLAY = pygame.display.set_mode((config.DISPLAY_WIDTH, config.DISPLAY_HEIGTH))
+pygame.display.set_caption("Pathfinding Visualizer by MrJoeKr")
 MAINCLOCK = pygame.time.Clock()
 
 
@@ -22,10 +21,10 @@ class Application:
         # Initialize menu window object
         self._menu_window = MenuWindow(self.display)
         # Initialize board window object
-        self._board_window = BoardWindow(DISPLAY, ROWS, COLS)
+        self._board_window = BoardWindow(DISPLAY, config.ROWS, config.COLS)
 
-        self.algorithm: pfa.SearchFunction = pfa.search_a_star
-        self.heuristic: pfa.HeuristicFunction = pfa.euclidian_distance
+        self.algorithm: path_algorithms.SearchFunction = path_algorithms.search_a_star
+        self.heuristic: path_algorithms.HeuristicFunction = path_algorithms.manhattan_distance
 
     def run_app(self):
 
@@ -42,7 +41,7 @@ class Application:
             self._menu_window.process_mouse_events()
             self._menu_window.process_key_events()
 
-            MAINCLOCK.tick(FPS)
+            MAINCLOCK.tick(config.FPS)
 
         # Initialize functions for pathfinding
         self.algorithm = self._menu_window.get_algorithm()
@@ -67,7 +66,7 @@ class Application:
 
                 self._board_window.user_wants_menu = False
 
-            MAINCLOCK.tick(FPS)
+            MAINCLOCK.tick(config.FPS)
 
 
 if __name__ == "__main__":
