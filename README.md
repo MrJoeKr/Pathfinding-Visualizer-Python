@@ -19,6 +19,9 @@
 - Click **``Go To Board``** to start experimenting
 
 # Requirements:
+```console
+pip install -r requirements.txt
+```
   - [Python 3.x](https://www.python.org/downloads/)
   - modules:
     - [pygame](https://www.pygame.org/)
