@@ -1,4 +1,7 @@
 # Path-visualizer-in-python
+
+![pathfinder_python](https://github.com/user-attachments/assets/24ba3527-28e0-4281-a104-5c1556cdf8be)
+
 - An application which [visualizes](#how-to-visualize-algorithm--maze-generation) various pathfinding algorithms, including [*A Star Search*](#a-star-search), [*Depth First Search*](#depth-first-search) and others
 - Visualizes [maze generation](#maze-generation) as well
 - Made in Python with the use of the module [pygame](https://www.pygame.org/).
