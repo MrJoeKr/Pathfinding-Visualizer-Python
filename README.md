@@ -17,7 +17,7 @@
 - [Setup](#setup)
 - [Requirements](#requirements)
 - [Controls](#controls)
-- [How to visualize algorithm/maze](#how-to-visualize-algorithm--maze-generation)
+- [How to Visualize Algorithm and Maze](#how-to-visualize-algorithm-and-maze-generation)
 - [Design the board](#design-the-board)
 - [Algorithms](#algorithms)
 - [Generate Mazes](#maze-generation)
@@ -47,7 +47,7 @@ pip install -r requirements.txt
 - **``N``** to generate a maze using [Randomized Depth First Search](#randomized-depth-first-search)
 
   
-# How to visualize algorithm/maze generation
+# How to Visualize Algorithm and Maze Generation
 Click on the **tick-box** in the *bottom-right corner* of the *board window* to have the algorithm or maze generation visualized.
 
 # Design the board
