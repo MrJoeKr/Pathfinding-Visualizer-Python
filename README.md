@@ -9,7 +9,7 @@
 ### Recursive Division
 ![pathfinder_maze_2](https://github.com/user-attachments/assets/285e890f-2531-4f54-ad7e-adb4fadffcd4)
 
-- An application which [visualizes](#how-to-visualize-algorithm--maze-generation) various pathfinding algorithms, including [*A Star Search*](#a-star-search), [*Depth First Search*](#depth-first-search) and others
+- An application which [visualizes](#how-to-visualize-algorithm-and-maze-generation) various pathfinding algorithms, including [*A Star Search*](#a-star-search), [*Depth First Search*](#depth-first-search) and others
 - Visualizes [maze generation](#maze-generation) as well
 - Made in Python with the use of the module [pygame](https://www.pygame.org/).
 
@@ -106,7 +106,7 @@ Heuristics only work for [A Star Search](#a-star-search) and are used to make [D
         - *The number of bits that differ between two binary strings. More formally, the distance between two strings of length $n$ A and B is $\sum_{i=1}^n{| A_i - B_i |}$.*
     - This heuristic is more effectively used in other problems (e.g. in [Sliding Tiles](https://visualstudiomagazine.com/articles/2015/10/30/sliding-tiles-c-sharp-ai.aspx))
     - In this case, it calculates the total number of different bits between ``x`` and ``y`` coordinates
-    - Creates nice patterns ([visualize](#how-to-visualize-algorithm--maze-generation) by yourself)
+    - Creates nice patterns ([visualize](#how-to-visualize-algorithm-and-maze-generation) by yourself)
     - **Guarantees shortest path**
     
 ### Enjoy.
