@@ -2,6 +2,13 @@
 
 ![pathfinder_python](https://github.com/user-attachments/assets/24ba3527-28e0-4281-a104-5c1556cdf8be)
 
+## Maze Generation
+### Randomized DFS
+![pathfinder_maze_1](https://github.com/user-attachments/assets/f0df6c7f-cdd3-4506-a082-976a7da43c9d)
+
+### Recursive Division
+![pathfinder_maze_2](https://github.com/user-attachments/assets/285e890f-2531-4f54-ad7e-adb4fadffcd4)
+
 - An application which [visualizes](#how-to-visualize-algorithm--maze-generation) various pathfinding algorithms, including [*A Star Search*](#a-star-search), [*Depth First Search*](#depth-first-search) and others
 - Visualizes [maze generation](#maze-generation) as well
 - Made in Python with the use of the module [pygame](https://www.pygame.org/).
